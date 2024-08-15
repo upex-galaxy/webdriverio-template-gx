@@ -58,7 +58,7 @@ jobs:
       run: bun install
 
     - name: 🧬 Install Replay Chromium
-      run: npx replayio install --verbose
+      run: npx replayio install
 
     - name: 🧪 Run Webdriverio Smoke Tests
       run: |
