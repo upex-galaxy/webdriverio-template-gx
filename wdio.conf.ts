@@ -67,16 +67,21 @@ const chromeArgs = [
 ];
 const replayioArgs = ['--disable-infobars', '--window-size=1920,1080'];
 if (isHEADLESS) chromeArgs.push('--headless', '--start-maximized');
-const linuxChromeBinaryPath = '~/.replay/runtimes/chrome-linux/chrome'; //? The path to the Chrome binary on tests are running on CI machine
+
+const binary = {
+	linux: '~/.replay/runtimes/chrome-linux/chrome',
+	mac: '../.replay/runtimes/Replay-Chromium.app/Contents/MacOS/Chromium',
+}; //? The path to the Chrome binary on tests are running on CI machine
+const binaryPath = process.env.IS_MAC ? binary.mac : binary.linux;
 const chromeOptions: ChromeOptions = {
 	// binary,
 	// detach,
 	args: isREPLAY ? replayioArgs : chromeArgs,
 	prefs: { 'download.default_directory': downloadPath },
 };
-if (isREPLAY) chromeOptions['binary'] = linuxChromeBinaryPath; //? If running on CI, use the linux binary path, otherwise, use the default Chrome Browser automatically detected by WebdriverIO
+if (isREPLAY) chromeOptions['binary'] = binaryPath; //? If running on CI, use the binary path, otherwise, use the default Chrome Browser automatically detected by WebdriverIO
 if (!isREPLAY) chromeOptions['detach'] = !onCI; //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
-process.env.RECORD_ALL_CONTENT = '1';
+
 const DEFAULT_Capabilities: RemoteCapabilities = [
 	{
 		maxInstances: 1,

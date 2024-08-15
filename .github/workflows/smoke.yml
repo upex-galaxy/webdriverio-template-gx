@@ -15,6 +15,16 @@ on:
   #* manual trigger:
   workflow_dispatch:
     inputs:
+      os:
+        description: 🚀Select the OS
+        required: true
+        default: 'macos-latest'
+        type: choice
+        options:
+        - ubuntu-latest
+        - ubuntu-22.04
+        - macos-latest
+        - windows-latest
       environment:
         description: 🚀Select the Test Environment
         required: true
@@ -27,17 +37,24 @@ on:
         - staging #? donde los QA realizan smoke, sanity o regression testing.
         - beta #? donde los beta testers realizan acceptance testing.
         - prod #? donde los usuarios finales usan la App.
+      replayio:
+        description: 🚀Activate Replayio Record
+        required: true
+        default: true
+        type: boolean
 
 jobs:
   SmokeTest:
     timeout-minutes: 60
-    runs-on: ubuntu-22.04
+    runs-on: ${{ github.event.inputs.os }}
     #? environment: Se usa para definir un entorno de despliegue y puede incluir políticas de protección y secretos específicos del entorno.
     #? env: Se usa para definir variables de entorno que estarán disponibles para todos los pasos dentro del job.
     environment:
       name: ${{ github.event.inputs.environment }}
     env:
       TEST_ENV: ${{ github.event.inputs.environment }}
+      IS_MAC: ${{ github.event.inputs.os == 'macos-latest' }}
+      REPLAY: ${{ github.event.inputs.replayio }}
       REPLAY_API_KEY: ${{ secrets.REPLAY_API_KEY }}
 
     steps:
