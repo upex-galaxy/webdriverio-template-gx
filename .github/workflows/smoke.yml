@@ -31,7 +31,7 @@ on:
 jobs:
   SmokeTest:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     #? environment: Se usa para definir un entorno de despliegue y puede incluir políticas de protección y secretos específicos del entorno.
     #? env: Se usa para definir variables de entorno que estarán disponibles para todos los pasos dentro del job.
     environment:
