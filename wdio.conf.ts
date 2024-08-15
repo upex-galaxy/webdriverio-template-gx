@@ -54,7 +54,6 @@ const DEBUG_TimeoutInterval = 24 * 60 * 60 * 1000; // 24 hours
 //* ---- Directories ---- *:
 export const screenshotPath = path.resolve(__dirname, 'test/screenshots'); // Screenshot directory is used to store screenshots during Tests (ignored by git)
 export const downloadPath = path.resolve(__dirname, 'test/downloads'); // Download directory is used to store downloaded files during Tests (ignored by git)
-export const responsePath = path.resolve(__dirname, 'test/api/res'); // Res (Response) directory is used to store API response files (ignored by git)
 export const dataPath = path.resolve(__dirname, 'test/data'); // Data directory (Permanent) is used to store test data files
 
 //* ---- Capabilities ---- *:
@@ -64,25 +63,28 @@ const chromeArgs = [
 	'--enable-chrome-browser-cloud-management', //? to enable chrome browser cloud management (CBCM) and prevent warning message
 	'--disable-dev-shm-usage', //? The /dev/shm partition is too small in certain VM environments, causing Chrome to fail or crash. Use this flag to work-around this issue (a temporary directory will always be used to create anonymous shared memory files).
 	'--disable-infobars', //? Disables the "Chrome is being controlled by automated test software" infobar
+	'--window-size=1920,1080',
 ];
-if (isHEADLESS)
-	chromeArgs.push('--headless', '--start-maximized', '--window-size=1920,1080');
+const replayioArgs = ['--disable-infobars', '--window-size=1920,1080'];
+if (isHEADLESS) chromeArgs.push('--headless', '--start-maximized');
 const linuxChromeBinaryPath = '~/.replay/runtimes/chrome-linux/chrome'; //? The path to the Chrome binary on tests are running on CI machine
 const chromeOptions: ChromeOptions = {
 	// binary,
-	args: chromeArgs,
-	detach: !onCI, //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
+	// detach,
+	args: isREPLAY ? replayioArgs : chromeArgs,
 	prefs: { 'download.default_directory': downloadPath },
 };
-if (onCI && isREPLAY) chromeOptions['binary'] = linuxChromeBinaryPath; //? If running on CI, use the linux binary path, otherwise, use the default Chrome Browser automatically detected by WebdriverIO
+if (isREPLAY) chromeOptions['binary'] = linuxChromeBinaryPath; //? If running on CI, use the linux binary path, otherwise, use the default Chrome Browser automatically detected by WebdriverIO
+if (!isREPLAY) chromeOptions['detach'] = !onCI; //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
+process.env.RECORD_ALL_CONTENT = '1';
 const DEFAULT_Capabilities: RemoteCapabilities = [
 	{
+		maxInstances: 1,
 		browserName: 'chrome',
 		acceptInsecureCerts: true,
 		'goog:chromeOptions': {
 			// binary,
 			args: chromeArgs,
-			detach: !onCI, //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
 			prefs: { 'download.default_directory': downloadPath },
 		},
 	},
@@ -100,36 +102,35 @@ const TESTRAIL_RUN_STRATEGY: TestRunStrategyType =
 
 //* ---- REPORTERS CONFIG ---- *:
 const reportsDir = path.resolve(__dirname, 'reports');
-const allureReportRepoURL =
-	'https://upex-galaxy.github.io/webdriverio-template-gx';
-const AllureConfig: ReporterEntry = [
-	'allure',
-	{
-		outputDir: reportsDir + '/allure-results',
-		reportedEnvironmentVars: {
-			ENVIRONMENT: TEST_ENV,
-			BROWSER: 'chrome', // default browser of this project
-			'📊 SMOKE Allure Report': allureReportRepoURL + '/smoke',
-			'📊 SANITY Allure Report': allureReportRepoURL + '/sanity',
-			'📊 REGRESSION Allure Report': allureReportRepoURL,
-		},
-		disableWebdriverStepsReporting: true,
-		disableWebdriverScreenshotsReporting: true,
-		disableMochaHooks: true,
-		addConsoleLogs: true,
-	},
-];
-const VideoConfig: ReporterEntry = [
-	'video',
-	{
-		saveAllVideos: true, // If true, also saves videos for successful test cases
-		videoSlowdownMultiplier: 1, // Higher to get slower videos, lower for faster videos [Value 1-100]
-		videoRenderTimeout: 3 * 60 * 1000, // Maximum time to wait for a video to finish rendering (in ms).
-		videoFormat: 'mp4', // The video format to use //? This is a MUST for the video reporter to work!
-		//? outputDir by default is same as the wdio outputDir
-		maxTestNameCharacters: 350, // Maximum characters to use for the test name in the file name
-	},
-];
+// const allureReportRepoURL = 'https://upex-galaxy.github.io/webdriverio-template-gx';
+// const AllureConfig: ReporterEntry = [
+// 	'allure',
+// 	{
+// 		outputDir: reportsDir + '/allure-results',
+// 		reportedEnvironmentVars: {
+// 			ENVIRONMENT: TEST_ENV,
+// 			BROWSER: 'chrome', // default browser of this project
+// 			'📊 SMOKE Allure Report': allureReportRepoURL + '/smoke',
+// 			'📊 SANITY Allure Report': allureReportRepoURL + '/sanity',
+// 			'📊 REGRESSION Allure Report': allureReportRepoURL,
+// 		},
+// 		disableWebdriverStepsReporting: true,
+// 		disableWebdriverScreenshotsReporting: true,
+// 		disableMochaHooks: true,
+// 		addConsoleLogs: true,
+// 	},
+// ];
+// const VideoConfig: ReporterEntry = [
+// 	'video',
+// 	{
+// 		saveAllVideos: true, // If true, also saves videos for successful test cases
+// 		videoSlowdownMultiplier: 1, // Higher to get slower videos, lower for faster videos [Value 1-100]
+// 		videoRenderTimeout: 3 * 60 * 1000, // Maximum time to wait for a video to finish rendering (in ms).
+// 		videoFormat: 'mp4', // The video format to use //? This is a MUST for the video reporter to work!
+// 		//? outputDir by default is same as the wdio outputDir
+// 		maxTestNameCharacters: 350, // Maximum characters to use for the test name in the file name
+// 	},
+// ];
 // const TestRailConfig: ReporterEntry = [
 // 	'testrail',
 // 	{
@@ -146,15 +147,16 @@ const VideoConfig: ReporterEntry = [
 
 const defaultReportConfig: ReporterEntry[] = [
 	'spec',
-	AllureConfig,
-	VideoConfig,
+	// AllureConfig,
+	// VideoConfig,
 ];
-const testRailReportConfig: ReporterEntry[] = [
-	'spec',
-	AllureConfig,
-	VideoConfig,
-];
-const ReportConfig = withTESTRAIL ? testRailReportConfig : defaultReportConfig;
+// const testRailReportConfig: ReporterEntry[] = [
+// 	'spec',
+// 	AllureConfig,
+// 	VideoConfig,
+// ];
+const ReportConfig =
+	/*withTESTRAIL ? testRailReportConfig :*/ defaultReportConfig;
 //? If the USE_TESTRAIL env variable is set to true, the TestRail reporter will be used. Otherwise, the default reporters will be used.
 
 export const config: Options.Testrunner = {
@@ -185,6 +187,7 @@ export const config: Options.Testrunner = {
 	maxInstances: onCI ? 3 : 1, // the more the higher the load on the machine. keep it low for local testing
 	capabilities: DEFAULT_Capabilities,
 	execArgv: isDEBUG ? ['--inspect'] : [],
+	automationProtocol: isREPLAY ? 'devtools' : 'webdriver',
 	//
 	//* ===================
 	//* Test Configurations
@@ -235,9 +238,8 @@ export const config: Options.Testrunner = {
 		console.log('🚀 -----> TestRail: ', withTESTRAIL);
 		console.log('🚀 -----> Headless: ', isHEADLESS);
 		console.log('🚀 -----> Debugger: ', isDEBUG);
-		console.log('🚀 -----> Replayio: ', onCI && isREPLAY);
-		// create test/api/res dir if not exists:
-		if (!fs.existsSync(responsePath)) fs.mkdirSync(responsePath);
+		console.log('🚀 -----> Replayio: ', isREPLAY);
+		console.log('🚀 -----> Chrome Options: ', chromeOptions);
 		// create test/screenshots dir if not exists:
 		if (!fs.existsSync(screenshotPath)) fs.mkdirSync(screenshotPath);
 		// create test/downloads dir if not exists:

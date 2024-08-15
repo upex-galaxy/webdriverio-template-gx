@@ -26,5 +26,5 @@
 			"@wdioconf": ["wdio.conf.ts"]
 		}
 	},
-	"include": ["test", "wdio.conf.ts", "types/**/*"]
+	"include": ["test", "wdio.conf.ts", "types/**/*", "getBrowserReplayio.js"]
 }

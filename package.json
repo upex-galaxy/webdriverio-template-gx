@@ -43,6 +43,7 @@
     "@wdio/types": "^8.32.4",
     "allure-commandline": "^2.27.0",
     "axios": "^1.7.2",
+    "devtools": "^8.40.2",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-import-resolver-alias": "^1.1.2",
