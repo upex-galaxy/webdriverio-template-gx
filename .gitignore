@@ -1,1 +1,9 @@
 node_modules
+.env
+allure-results
+allure-report
+reports
+test/downloads
+test/screenshots
+test/videos
+test/specs/debugging.spec.ts

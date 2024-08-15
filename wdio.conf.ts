@@ -1,306 +1,410 @@
-import type { Options } from '@wdio/types'
+import type { Options } from '@wdio/types';
+import { register } from 'tsconfig-paths';
+import tsConfig from './tsconfig.json';
+import * as dotenv from 'dotenv';
+import path from 'node:path';
+import type {
+	RemoteCapabilities,
+	ChromeOptions,
+} from '@wdio/types/build/Capabilities';
+import type { ReporterEntry } from '@wdio/types/build/Reporters';
+import { TEST_PLAN } from './test/TestPlan';
+import { addAttachment } from '@wdio/allure-reporter';
+import fs from 'fs';
+dotenv.config();
+
+register({
+	baseUrl: tsConfig.compilerOptions.baseUrl,
+	paths: tsConfig.compilerOptions.paths,
+});
+
+//* ---- ENVIRONMENT CONFIG ---- *:
+type TestEnvType =
+	| 'dev'
+	| 'sandbox'
+	| 'QA'
+	| 'staging'
+	| 'beta'
+	| 'prod'
+	| undefined;
+export const TEST_ENV: TestEnvType =
+	(process.env.TEST_ENV as TestEnvType) ?? 'QA'; // set QA as default just in case the env variable is not set
+const ENVIRONMENTS = {
+	dev: 'https://the-internet.herokuapp.com/',
+	sandbox: 'https://the-internet.herokuapp.com/',
+	QA: 'https://the-internet.herokuapp.com/',
+	staging: 'https://the-internet.herokuapp.com/',
+	beta: 'https://the-internet.herokuapp.com/',
+	prod: 'https://the-internet.herokuapp.com/',
+};
+const ENV_BASE_URL = ENVIRONMENTS[TEST_ENV];
+
+//* ---- Feature Flags ---- *:
+const onCI = process.env.CI ? true : false; // On CI, we always want it to be TRUE
+const isHEADLESS = onCI ? true : process.env.HEADLESS === 'true' ? true : false; // On CI, we always want to run headless
+const isDEBUG = onCI ? false : process.env.DEBUG === 'true' ? true : false; // On CI, we always want it to be FALSE
+const isREPLAY = process.env.REPLAY === 'true' ? true : false; // Only to be used on CI Pipelines (linux machine) true or false.
+const localTESTRAIL = process.env.USE_TESTRAIL === 'true' ? true : false;
+const withTESTRAIL = onCI ? true : localTESTRAIL;
+
+//* ---- Timing ---- *:
+const DEFAULT_TimeoutInterval = 4 * 60 * 1000; // 4min
+const DEBUG_TimeoutInterval = 24 * 60 * 60 * 1000; // 24 hours
+
+//* ---- Directories ---- *:
+export const screenshotPath = path.resolve(__dirname, 'test/screenshots'); // Screenshot directory is used to store screenshots during Tests (ignored by git)
+export const downloadPath = path.resolve(__dirname, 'test/downloads'); // Download directory is used to store downloaded files during Tests (ignored by git)
+export const responsePath = path.resolve(__dirname, 'test/api/res'); // Res (Response) directory is used to store API response files (ignored by git)
+export const dataPath = path.resolve(__dirname, 'test/data'); // Data directory (Permanent) is used to store test data files
+
+//* ---- Capabilities ---- *:
+const chromeArgs = [
+	'--no-sandbox',
+	'--disable-gpu', //? needed to enable google-chrome-headless on windows platform
+	'--enable-chrome-browser-cloud-management', //? to enable chrome browser cloud management (CBCM) and prevent warning message
+	'--disable-dev-shm-usage', //? The /dev/shm partition is too small in certain VM environments, causing Chrome to fail or crash. Use this flag to work-around this issue (a temporary directory will always be used to create anonymous shared memory files).
+	'--disable-infobars', //? Disables the "Chrome is being controlled by automated test software" infobar
+];
+if (isHEADLESS)
+	chromeArgs.push('--headless', '--start-maximized', '--window-size=1920,1080');
+const linuxChromeBinaryPath = '~/.replay/runtimes/chrome-linux/chrome'; //? The path to the Chrome binary on tests are running on CI machine
+const chromeOptions: ChromeOptions = {
+	// binary,
+	args: chromeArgs,
+	detach: !onCI, //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
+	prefs: { 'download.default_directory': downloadPath },
+};
+if (onCI && isREPLAY) chromeOptions['binary'] = linuxChromeBinaryPath; //? If running on CI, use the linux binary path, otherwise, use the default Chrome Browser automatically detected by WebdriverIO
+const DEFAULT_Capabilities: RemoteCapabilities = [
+	{
+		browserName: 'chrome',
+		acceptInsecureCerts: true,
+		'goog:chromeOptions': {
+			// binary,
+			args: chromeArgs,
+			detach: !onCI, //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
+			prefs: { 'download.default_directory': downloadPath },
+		},
+	},
+];
+//* ---- Test Runs Strategy ---- *:
+type TestRunStrategyType =
+	| 'Smoke'
+	| 'Regression'
+	| 'Sanity'
+	| 'Suite'
+	| undefined;
+const TESTRAIL_RUN_STRATEGY: TestRunStrategyType =
+	(process.env.TESTRAIL_RUN_STRATEGY as TestRunStrategyType) ?? 'Suite';
+//? TESTRAIL_RUN_STRATEGY is used to create a custom name for the test run in TestRail. Depending on the CI file, the test run strategy can be set to Smoke, Regression, or Sanity
+
+//* ---- REPORTERS CONFIG ---- *:
+const reportsDir = path.resolve(__dirname, 'reports');
+const allureReportRepoURL =
+	'https://upex-galaxy.github.io/webdriverio-template-gx';
+const AllureConfig: ReporterEntry = [
+	'allure',
+	{
+		outputDir: reportsDir + '/allure-results',
+		reportedEnvironmentVars: {
+			ENVIRONMENT: TEST_ENV,
+			BROWSER: 'chrome', // default browser of this project
+			'📊 SMOKE Allure Report': allureReportRepoURL + '/smoke',
+			'📊 SANITY Allure Report': allureReportRepoURL + '/sanity',
+			'📊 REGRESSION Allure Report': allureReportRepoURL,
+		},
+		disableWebdriverStepsReporting: true,
+		disableWebdriverScreenshotsReporting: true,
+		disableMochaHooks: true,
+		addConsoleLogs: true,
+	},
+];
+const VideoConfig: ReporterEntry = [
+	'video',
+	{
+		saveAllVideos: true, // If true, also saves videos for successful test cases
+		videoSlowdownMultiplier: 1, // Higher to get slower videos, lower for faster videos [Value 1-100]
+		videoRenderTimeout: 3 * 60 * 1000, // Maximum time to wait for a video to finish rendering (in ms).
+		videoFormat: 'mp4', // The video format to use //? This is a MUST for the video reporter to work!
+		//? outputDir by default is same as the wdio outputDir
+		maxTestNameCharacters: 350, // Maximum characters to use for the test name in the file name
+	},
+];
+// const TestRailConfig: ReporterEntry = [
+// 	'testrail',
+// 	{
+// 		projectId: 2, // project id is here https://glasfunds.testrail.io/index.php?/projects/overview/2
+// 		suiteId: 8, // suite id is here https://glasfunds.testrail.io/index.php?/suites/view/8
+// 		domain: 'glasfunds.testrail.io',
+// 		username: process.env.TESTRAIL_USERNAME,
+// 		apiToken: process.env.TESTRAIL_APIKEY,
+// 		runName: `Automated Test Run: ${TESTRAIL_RUN_STRATEGY}`, // custom name for the test run
+// 		oneReport: true, // Create a single test run in TestRail.
+// 		includeAll: false, // Include all tests in suite in test run.
+// 	},
+// ]; //? Learn about TestRail Importer: https://webdriver.io/docs/wdio-testrail-reporter/
+
+const defaultReportConfig: ReporterEntry[] = [
+	'spec',
+	AllureConfig,
+	VideoConfig,
+];
+const testRailReportConfig: ReporterEntry[] = [
+	'spec',
+	AllureConfig,
+	VideoConfig,
+];
+const ReportConfig = withTESTRAIL ? testRailReportConfig : defaultReportConfig;
+//? If the USE_TESTRAIL env variable is set to true, the TestRail reporter will be used. Otherwise, the default reporters will be used.
+
 export const config: Options.Testrunner = {
-    //
-    // ====================
-    // Runner Configuration
-    // ====================
-    // WebdriverIO supports running e2e tests as well as unit and component tests.
-    runner: 'local',
-    autoCompileOpts: {
-        autoCompile: true,
-        tsNodeOpts: {
-            project: './tsconfig.json',
-            transpileOnly: true
-        }
-    },
-    
-    //
-    // ==================
-    // Specify Test Files
-    // ==================
-    // Define which test specs should run. The pattern is relative to the directory
-    // of the configuration file being run.
-    //
-    // The specs are defined as an array of spec files (optionally using wildcards
-    // that will be expanded). The test for each spec file will be run in a separate
-    // worker process. In order to have a group of spec files run in the same worker
-    // process simply enclose them in an array within the specs array.
-    //
-    // The path of the spec files will be resolved relative from the directory of
-    // of the config file unless it's absolute.
-    //
-    specs: [
-        './test/specs/**/*.ts'
-    ],
-    // Patterns to exclude.
-    exclude: [
-        // 'path/to/excluded/files'
-    ],
-    //
-    // ============
-    // Capabilities
-    // ============
-    // Define your capabilities here. WebdriverIO can run multiple capabilities at the same
-    // time. Depending on the number of capabilities, WebdriverIO launches several test
-    // sessions. Within your capabilities you can overwrite the spec and exclude options in
-    // order to group specific specs to a specific capability.
-    //
-    // First, you can define how many instances should be started at the same time. Let's
-    // say you have 3 different capabilities (Chrome, Firefox, and Safari) and you have
-    // set maxInstances to 1; wdio will spawn 3 processes. Therefore, if you have 10 spec
-    // files and you set maxInstances to 10, all spec files will get tested at the same time
-    // and 30 processes will get spawned. The property handles how many capabilities
-    // from the same test should run tests.
-    //
-    maxInstances: 10,
-    //
-    // If you have trouble getting all important capabilities together, check out the
-    // Sauce Labs platform configurator - a great tool to configure your capabilities:
-    // https://saucelabs.com/platform/platform-configurator
-    //
-    capabilities: [{
-        browserName: 'chrome'
-    }],
+	//
+	//* ====================
+	//* Runner Configuration
+	//* ====================
+	runner: 'local', // Keep it local for E2E testing.
+	autoCompileOpts: {
+		autoCompile: true,
+		tsNodeOpts: {
+			project: './tsconfig.json',
+			transpileOnly: true,
+		},
+	},
+	headless: true, // default is false
+	//
+	//* ==================
+	//* Specify Test Files
+	//* ==================
+	specs: ['./test/specs/**/*.test.ts'],
+	suites: TEST_PLAN,
+	exclude: ['./test/specs/**/*.test.draft.ts'],
+	//
+	//* ============
+	//* Capabilities
+	//* ============
+	maxInstances: onCI ? 3 : 1, // the more the higher the load on the machine. keep it low for local testing
+	capabilities: DEFAULT_Capabilities,
+	execArgv: isDEBUG ? ['--inspect'] : [],
+	//
+	//* ===================
+	//* Test Configurations
+	//* ===================
+	logLevel: isDEBUG ? 'debug' : 'info',
+	bail: 0,
+	baseUrl: ENV_BASE_URL, // default is the QA environment //? available TEST_ENV options for Automation are: sandbox, QA, staging, beta, prod
+	waitforTimeout: 10000, // Default timeout for all waitFor* commands. //? I think 10 seconds is enough for now.
+	connectionRetryTimeout: 120000,
+	connectionRetryCount: 3,
+	services: ['devtools'],
+	framework: 'mocha', // The following are supported: Mocha, Jasmine, and Cucumber
+	specFileRetries: 0, //? Disabled because should not exist Flaky Tests in the first place
+	// specFileRetriesDeferred: false, //? Useful Whether or not retried spec files should be retried immediately or deferred to the end of the queue
+	//
+	//* ===================
+	//* Test Reporters
+	//* ===================
+	outputDir: reportsDir,
+	reporters: ReportConfig,
+	mochaOpts: {
+		ui: 'bdd',
+		timeout: isDEBUG ? DEBUG_TimeoutInterval : DEFAULT_TimeoutInterval,
+		defaultTimeoutInterval: isDEBUG
+			? DEBUG_TimeoutInterval
+			: DEFAULT_TimeoutInterval,
+	},
+	//
+	//* ===================
+	//* Test Hooks
+	//* ===================
+	// WebdriverIO provides several hooks you can use to interfere with the test process in order to enhance
+	// it and to build services around it. You can either apply a single function or an array of
+	// methods to it. If one of them returns with a promise, WebdriverIO will wait until that promise got
+	// resolved to continue.
+	/**
+	 * Gets executed once before all workers get launched.
+	 * @param {object} config wdio configuration object
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 */
+	onPrepare: function (config, capabilities) {
+		config;
+		capabilities;
+		console.log('🧪-------------- TEST SESSION STARTED --------------');
+		console.log('🚀 -----> Test Environment: ', TEST_ENV);
+		console.log('🚀 -----> Base URL: ', ENV_BASE_URL);
+		console.log('🚀 -----> Test Run Strategy: ', TESTRAIL_RUN_STRATEGY);
+		console.log('🚀 -----> TestRail: ', withTESTRAIL);
+		console.log('🚀 -----> Headless: ', isHEADLESS);
+		console.log('🚀 -----> Debugger: ', isDEBUG);
+		console.log('🚀 -----> Replayio: ', onCI && isREPLAY);
+		// create test/api/res dir if not exists:
+		if (!fs.existsSync(responsePath)) fs.mkdirSync(responsePath);
+		// create test/screenshots dir if not exists:
+		if (!fs.existsSync(screenshotPath)) fs.mkdirSync(screenshotPath);
+		// create test/downloads dir if not exists:
+		if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath);
+	},
+	/**
+	 * Gets executed before a worker process is spawned and can be used to initialize specific service
+	 * for that worker as well as modify runtime environments in an async fashion.
+	 * @param  {string} cid      capability id (e.g 0-0)
+	 * @param  {object} caps     object containing capabilities for session that will be spawn in the worker
+	 * @param  {object} specs    specs to be run in the worker process
+	 * @param  {object} args     object that will be merged with the main configuration once worker is initialized
+	 * @param  {object} execArgv list of string arguments passed to the worker process
+	 */
+	//? onWorkerStart: function (cid, caps, specs, args, execArgv) {
+	// },
+	/**
+	 * Gets executed just after a worker process has exited.
+	 * @param  {string} cid      capability id (e.g 0-0)
+	 * @param  {number} exitCode 0 - success, 1 - fail
+	 * @param  {object} specs    specs to be run in the worker process
+	 * @param  {number} retries  number of retries used
+	 */
+	//? onWorkerEnd: function (cid, exitCode, specs, retries) {
+	// },
+	/**
+	 * Gets executed just before initializing the webdriver session and test framework. It allows you
+	 * to manipulate configurations depending on the capability or spec.
+	 * @param {object} config wdio configuration object
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 * @param {Array.<String>} specs List of spec file paths that are to be run
+	 * @param {string} cid worker id (e.g. 0-0)
+	 */
+	//? beforeSession: function (config, capabilities, specs, cid) {
+	// },
+	/**
+	 * Gets executed before test execution begins. At this point you can access to all global
+	 * variables like `browser`. It is the perfect place to define custom commands.
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 * @param {Array.<String>} specs        List of spec file paths that are to be run
+	 * @param {object}         browser      instance of created browser/device session
+	 */
+	//? before: async function () {
+	// },
+	/**
+	 * Runs before a WebdriverIO command gets executed.
+	 * @param {string} commandName hook command name
+	 * @param {Array} args arguments that command would receive
+	 */
+	//? beforeCommand: function (commandName, args) {
+	// },
+	/**
+	 * Hook that gets executed before the suite starts
+	 * @param {object} suite suite details
+	 */
+	//? beforeSuite: function (suite) {
+	// },
+	/**
+	 * Function to be executed before a test (in Mocha/Jasmine) starts.
+	 */
+	//? beforeTest: function (test, context) {
+	// },
+	/**
+	 * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
+	 * beforeEach in Mocha)
+	 */
+	//? beforeHook: function (test, context, hookName) {
+	// },
+	/**
+	 * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
+	 * afterEach in Mocha)
+	 */
+	//? afterHook: function (test, context, { error, result, duration, passed, retries }, hookName) {
+	// },
+	/**
+	 * Function to be executed after a test (in Mocha/Jasmine only)
+	 * @param {object}  test             test object
+	 * @param {object}  context          scope object the test was executed with
+	 * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
+	 * @param {*}       result.result    return object of test function
+	 * @param {number}  result.duration  duration of test
+	 * @param {boolean} result.passed    true if test has passed, otherwise false
+	 * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
+	 */
+	afterTest: async function (test, context, { passed }) {
+		test;
+		context;
+		// convert test.title into snake case string and remove special characters:
+		const testName = test.title
+			.replace(/[^a-zA-Z0-9]/g, '_')
+			.toLowerCase()
+			.replace(/_+/g, '_');
 
-    //
-    // ===================
-    // Test Configurations
-    // ===================
-    // Define all options that are relevant for the WebdriverIO instance here
-    //
-    // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'info',
-    //
-    // Set specific log levels per logger
-    // loggers:
-    // - webdriver, webdriverio
-    // - @wdio/browserstack-service, @wdio/devtools-service, @wdio/sauce-service
-    // - @wdio/mocha-framework, @wdio/jasmine-framework
-    // - @wdio/local-runner
-    // - @wdio/sumologic-reporter
-    // - @wdio/cli, @wdio/config, @wdio/utils
-    // Level of logging verbosity: trace | debug | info | warn | error | silent
-    // logLevels: {
-    //     webdriver: 'info',
-    //     '@wdio/appium-service': 'info'
-    // },
-    //
-    // If you only want to run your tests until a specific amount of tests have failed use
-    // bail (default is 0 - don't bail, run all tests).
-    bail: 0,
-    //
-    // Set a base URL in order to shorten url command calls. If your `url` parameter starts
-    // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
-    // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
-    // gets prepended directly.
-    // baseUrl: 'http://localhost:8080',
-    //
-    // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
-    //
-    // Default timeout in milliseconds for request
-    // if browser driver or grid doesn't send response
-    connectionRetryTimeout: 120000,
-    //
-    // Default request retries count
-    connectionRetryCount: 3,
-    //
-    // Test runner services
-    // Services take over a specific job you don't want to take care of. They enhance
-    // your test setup with almost no effort. Unlike plugins, they don't add new
-    // commands. Instead, they hook themselves up into the test process.
-    services: ['devtools'],
-
-    // Framework you want to run your specs with.
-    // The following are supported: Mocha, Jasmine, and Cucumber
-    // see also: https://webdriver.io/docs/frameworks
-    //
-    // Make sure you have the wdio adapter package for the specific framework installed
-    // before running any tests.
-    framework: 'mocha',
-    
-    //
-    // The number of times to retry the entire specfile when it fails as a whole
-    // specFileRetries: 1,
-    //
-    // Delay in seconds between the spec file retry attempts
-    // specFileRetriesDelay: 0,
-    //
-    // Whether or not retried spec files should be retried immediately or deferred to the end of the queue
-    // specFileRetriesDeferred: false,
-    //
-    // Test reporter for stdout.
-    // The only one supported by default is 'dot'
-    // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec','junit',['allure', {outputDir: 'allure-results'}],'json','video','slack'],
-
-    // Options to be passed to Mocha.
-    // See the full list at http://mochajs.org/
-    mochaOpts: {
-        ui: 'bdd',
-        timeout: 60000
-    },
-
-    //
-    // =====
-    // Hooks
-    // =====
-    // WebdriverIO provides several hooks you can use to interfere with the test process in order to enhance
-    // it and to build services around it. You can either apply a single function or an array of
-    // methods to it. If one of them returns with a promise, WebdriverIO will wait until that promise got
-    // resolved to continue.
-    /**
-     * Gets executed once before all workers get launched.
-     * @param {object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     */
-    // onPrepare: function (config, capabilities) {
-    // },
-    /**
-     * Gets executed before a worker process is spawned and can be used to initialize specific service
-     * for that worker as well as modify runtime environments in an async fashion.
-     * @param  {string} cid      capability id (e.g 0-0)
-     * @param  {object} caps     object containing capabilities for session that will be spawn in the worker
-     * @param  {object} specs    specs to be run in the worker process
-     * @param  {object} args     object that will be merged with the main configuration once worker is initialized
-     * @param  {object} execArgv list of string arguments passed to the worker process
-     */
-    // onWorkerStart: function (cid, caps, specs, args, execArgv) {
-    // },
-    /**
-     * Gets executed just after a worker process has exited.
-     * @param  {string} cid      capability id (e.g 0-0)
-     * @param  {number} exitCode 0 - success, 1 - fail
-     * @param  {object} specs    specs to be run in the worker process
-     * @param  {number} retries  number of retries used
-     */
-    // onWorkerEnd: function (cid, exitCode, specs, retries) {
-    // },
-    /**
-     * Gets executed just before initialising the webdriver session and test framework. It allows you
-     * to manipulate configurations depending on the capability or spec.
-     * @param {object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs List of spec file paths that are to be run
-     * @param {string} cid worker id (e.g. 0-0)
-     */
-    // beforeSession: function (config, capabilities, specs, cid) {
-    // },
-    /**
-     * Gets executed before test execution begins. At this point you can access to all global
-     * variables like `browser`. It is the perfect place to define custom commands.
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs        List of spec file paths that are to be run
-     * @param {object}         browser      instance of created browser/device session
-     */
-    // before: function (capabilities, specs) {
-    // },
-    /**
-     * Runs before a WebdriverIO command gets executed.
-     * @param {string} commandName hook command name
-     * @param {Array} args arguments that command would receive
-     */
-    // beforeCommand: function (commandName, args) {
-    // },
-    /**
-     * Hook that gets executed before the suite starts
-     * @param {object} suite suite details
-     */
-    // beforeSuite: function (suite) {
-    // },
-    /**
-     * Function to be executed before a test (in Mocha/Jasmine) starts.
-     */
-    // beforeTest: function (test, context) {
-    // },
-    /**
-     * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
-     * beforeEach in Mocha)
-     */
-    // beforeHook: function (test, context, hookName) {
-    // },
-    /**
-     * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
-     * afterEach in Mocha)
-     */
-    // afterHook: function (test, context, { error, result, duration, passed, retries }, hookName) {
-    // },
-    /**
-     * Function to be executed after a test (in Mocha/Jasmine only)
-     * @param {object}  test             test object
-     * @param {object}  context          scope object the test was executed with
-     * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
-     * @param {*}       result.result    return object of test function
-     * @param {number}  result.duration  duration of test
-     * @param {boolean} result.passed    true if test has passed, otherwise false
-     * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
-     */
-    afterTest: async function(test, context, { error, result, duration, passed, retries }) {
-        if (!passed) {
-            await browser.takeScreenshot();
-        }
-    },
-
-
-    /**
-     * Hook that gets executed after the suite has ended
-     * @param {object} suite suite details
-     */
-    // afterSuite: function (suite) {
-    // },
-    /**
-     * Runs after a WebdriverIO command gets executed
-     * @param {string} commandName hook command name
-     * @param {Array} args arguments that command would receive
-     * @param {number} result 0 - command success, 1 - command error
-     * @param {object} error error object if any
-     */
-    // afterCommand: function (commandName, args, result, error) {
-    // },
-    /**
-     * Gets executed after all tests are done. You still have access to all global variables from
-     * the test.
-     * @param {number} result 0 - test pass, 1 - test fail
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs List of spec file paths that ran
-     */
-    // after: function (result, capabilities, specs) {
-    // },
-    /**
-     * Gets executed right after terminating the webdriver session.
-     * @param {object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs List of spec file paths that ran
-     */
-    // afterSession: function (config, capabilities, specs) {
-    // },
-    /**
-     * Gets executed after all workers got shut down and the process is about to exit. An error
-     * thrown in the onComplete hook will result in the test run failing.
-     * @param {object} exitCode 0 - success, 1 - fail
-     * @param {object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {<Object>} results object containing test results
-     */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
-    /**
-    * Gets executed when a refresh happens.
-    * @param {string} oldSessionId session ID of the old session
-    * @param {string} newSessionId session ID of the new session
-    */
-    // onReload: function(oldSessionId, newSessionId) {
-    // }
-    /**
-    * Hook that gets executed before a WebdriverIO assertion happens.
-    * @param {object} params information about the assertion to be executed
-    */
-    // beforeAssertion: function(params) {
-    // }
-    /**
-    * Hook that gets executed after a WebdriverIO assertion happened.
-    * @param {object} params information about the assertion that was executed, including its results
-    */
-    // afterAssertion: function(params) {
-    // }
-}
+		if (!passed) {
+			const screenshotFile = screenshotPath + '/' + testName + '.png';
+			await browser.saveScreenshot(screenshotFile);
+			addAttachment(
+				'❌FAILURE EVIDENCE: ' + testName + ' (Screenshot)',
+				fs.readFileSync(screenshotFile),
+				'image/png',
+			);
+		}
+	},
+	/**
+	 * Hook that gets executed after the suite has ended
+	 * @param {object} suite suite details
+	 */
+	//? afterSuite: function (suite) {
+	// },
+	/**
+	 * Runs after a WebdriverIO command gets executed
+	 * @param {string} commandName hook command name
+	 * @param {Array} args arguments that command would receive
+	 * @param {number} result 0 - command success, 1 - command error
+	 * @param {object} error error object if any
+	 */
+	//? afterCommand: function (commandName, args, result, error) {
+	// },
+	/**
+	 * Gets executed after all tests are done. You still have access to all global variables from
+	 * the test.
+	 * @param {number} result 0 - test pass, 1 - test fail
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 * @param {Array.<String>} specs List of spec file paths that ran
+	 */
+	//? after: function (result, capabilities, specs) {
+	// },
+	/**
+	 * Gets executed right after terminating the webdriver session.
+	 * @param {object} config wdio configuration object
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 * @param {Array.<String>} specs List of spec file paths that ran
+	 */
+	//? afterSession: function (config, capabilities, specs) {
+	// },
+	/**
+	 * Gets executed after all workers got shut down and the process is about to exit. An error
+	 * thrown in the onComplete hook will result in the test run failing.
+	 * @param {object} exitCode 0 - success, 1 - fail
+	 * @param {object} config wdio configuration object
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 * @param {<Object>} results object containing test results
+	 */
+	onComplete: function (exitCode, config, capabilities, results) {
+		exitCode;
+		config;
+		capabilities;
+		console.log('🧪------- Test Session Ended -------');
+		console.log('🧪 TEST RESULTS:', results);
+	},
+	/**
+	 * Gets executed when a refresh happens.
+	 * @param {string} oldSessionId session ID of the old session
+	 * @param {string} newSessionId session ID of the new session
+	 */
+	//? onReload: function(oldSessionId, newSessionId) {
+	// }
+	/**
+	 * Hook that gets executed before a WebdriverIO assertion happens.
+	 * @param {object} params information about the assertion to be executed
+	 */
+	//? beforeAssertion: function(params) {
+	// }
+	/**
+	 * Hook that gets executed after a WebdriverIO assertion happened.
+	 * @param {object} params information about the assertion that was executed, including its results
+	 */
+	//? afterAssertion: function(params) {
+	// }
+};
