@@ -8,9 +8,9 @@ on:
     - main
 
   #* automatically triggered again when new changes are merged into main branch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
   #* manual trigger:
   workflow_dispatch:
