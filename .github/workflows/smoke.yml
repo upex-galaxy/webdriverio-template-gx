@@ -58,11 +58,11 @@ jobs:
       run: bun install
 
     - name: 🧬 Install Replay Chromium
-      run: npx replayio install
+      run: npx replayio install --verbose
 
     - name: 🧪 Run Webdriverio Smoke Tests
       run: |
-        bun run suite sanityExample
+        bun run ci:suite sanityExample
 
     - name: 🎬️ Upload Replayio Recordings
       run: |
