@@ -98,7 +98,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: log-reports
+        name: wdio-log-reports
         path: reports
         retention-days: 15
 
