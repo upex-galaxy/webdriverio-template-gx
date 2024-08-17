@@ -138,7 +138,7 @@ jobs:
         password: ${{ secrets.XRAY_CLIENT_SECRET}}
         testFormat: 'junit' #! NO CAMBIAR
         testPaths: 'reports/junit-results/wdio-junit-test-reporter.xml' #! NO CAMBIAR
-        testExecKey: 'GX3-1526' #! NO CAMBIAR
+        testExecKey: 'GX3-4784' #! NO CAMBIAR
         projectKey: 'GX3' #! NO CAMBIAR
         testEnvironments: ${{ github.event.inputs.environment }}
 

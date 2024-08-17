@@ -39,7 +39,7 @@ on:
       xray_tx:
         description: 🚀Enter the Test Execution ID
         required: true
-        default: 'GX3-1526' #! No modificar, esto es solo un ejemplo.
+        default: 'GX3-4773' #! No modificar, esto es solo un ejemplo.
         type: string
       xray_project:
         description: 🚀Select the Project Key
