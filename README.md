@@ -56,7 +56,7 @@ Sigue estos pasos para configurar y ejecutar las pruebas localmente:
     - Para ejecutar una regresión: `pnpm run regression`
     - _Para más scripts, por favor revisa el archivo package.json._
 
-# **📝 Resumen del Plan de Repositorio de QA Automation**
+# **📝 Plan de Repositorio QA Automation**
 
 ## 🧪 Estrategia para Continuous Integration (CI/CD): GitHub Actions
 
