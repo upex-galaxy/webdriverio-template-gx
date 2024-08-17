@@ -58,6 +58,52 @@ Sigue estos pasos para configurar y ejecutar las pruebas localmente:
 
 # **📝 Plan de Repositorio QA Automation**
 
+## 🛠️ Proceso de Contribución al Repositorio
+
+### 1. **Crea una Nueva Rama**
+
+-   Antes de comenzar a trabajar, crea una nueva rama para tu tarea o funcionalidad:
+    ```bash
+    git checkout -b nombre-de-la-rama
+    ```
+
+### 2. **Realiza Cambios y Haz Commits**
+
+-   Realiza los cambios necesarios en tu rama.
+-   Añade los archivos modificados al staging area:
+    ```bash
+    git add .
+    ```
+-   Realiza un commit con un mensaje claro y descriptivo:
+    ```bash
+    git commit -m "Descripción clara de los cambios realizados"
+    ```
+
+### 3. **Actualiza tu Rama**
+
+-   Asegúrate de que tu rama esté actualizada con la rama de integración principal (`QA`):
+    ```bash
+    git pull origin QA
+    ```
+
+### 4. **Sube tu Rama**
+
+-   Empuja tu rama al repositorio remoto:
+    ```bash
+    git push origin nombre-de-la-rama
+    ```
+
+### 5. **Crea un Pull Request (PR)**
+
+-   Una vez que hayas subido tu rama, crea un Pull Request (PR) en GitHub.
+-   **Importante**: Cuando crees un PR, se generará automáticamente un template predefinido. Asegúrate de completar todos los campos requeridos en el template para una correcta revisión del PR.
+-   Indica claramente el objetivo del PR, los cambios realizados y cualquier detalle adicional que deba ser considerado durante la revisión.
+
+### 6. **Revisión y Merge**
+
+-   El equipo revisará tu PR. Es posible que recibas comentarios o solicitudes de cambio.
+-   Una vez que el PR sea aprobado, se integrará a la rama `QA` siguiendo el flujo de trabajo establecido.
+
 ## 🧪 Estrategia para Continuous Integration (CI/CD): GitHub Actions
 
 Este repositorio está configurado para ejecutar pruebas automatizadas mediante diferentes estrategias de ejecución de pruebas:
