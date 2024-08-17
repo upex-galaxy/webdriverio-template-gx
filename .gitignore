@@ -7,4 +7,3 @@ test/downloads
 test/screenshots
 test/videos
 test/specs/debugging.spec.ts
-getBrowserReplayio.js

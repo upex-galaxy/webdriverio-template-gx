@@ -1,9 +1,9 @@
 //? This is the Test Plan file, where every test filePath will be mapped to a unique named variable in order to be used as Identificator Name, so it can be organized into the Test Plan below in different applicable Suites.
 //*---- Mapped Test Files (Test Suites) ----:
 //? by every test file path:
-const example = './test/specs/test.e2e.ts';
+const example = './test/specs/another.e2e.ts';
 //? by every test component path:
-const authTests = './test/specs/auth'; //? Also you can group the test files by the SUT components, so you can use it as a "Suite" for each component (group of test files), doing so you can organize the test plan by the SUT components.
+const authTests = './test/specs/auth/*.e2e.ts'; //? Also you can group the test files by the SUT components, so you can use it as a "Suite" for each component (group of test files), doing so you can organize the test plan by the SUT components.
 
 //*---- TEST PLAN Strategies ----:
 export const TEST_PLAN = {
@@ -19,5 +19,5 @@ export const TEST_PLAN = {
 	integration: [], // api testing (backend, using axios)
 	e2e: [], // end-to-end UI testing (frontend)
 	visual: [], // visual testing (UI, using plugins)
-	performance: [], // performance testing (webdriverio is not the best tool for this)
+	performance: [] // performance testing (webdriverio is not the best tool for this)
 };

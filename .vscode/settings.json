@@ -107,8 +107,8 @@
 		"sanity.yml": "test-ts",
 		"*.api.test.ts": "test-js",
 		"*.e2e.test.ts": "test-jsx",
-		"Page.ts": "3d",
-		"*.Page.ts": "3d",
+		"page.ts": "3d",
+		"*.page.ts": "3d",
 		"TestBase.ts": "taskfile",
 		"TestPlan.ts": "taskfile",
 		"wdio.conf.ts": "robots"
@@ -121,7 +121,7 @@
 		"allure-results": "content",
 		"allure-report": "mjml",
 		"pageobjects": "tools",
-		"test": "coverage",
+		"test": "coverage"
 	},
 	// =====================
 	//? Testing Settings

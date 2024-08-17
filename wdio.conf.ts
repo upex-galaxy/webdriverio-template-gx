@@ -1,41 +1,30 @@
 import type { Options } from '@wdio/types';
+import type { RemoteCapabilities } from '@wdio/types/build/Capabilities';
+import type { ReporterEntry } from '@wdio/types/build/Reporters';
+import { addAttachment } from '@wdio/allure-reporter';
+import { TEST_PLAN } from './test/TestPlan';
 import { register } from 'tsconfig-paths';
 import tsConfig from './tsconfig.json';
-import * as dotenv from 'dotenv';
 import path from 'node:path';
-import type {
-	RemoteCapabilities,
-	ChromeOptions,
-} from '@wdio/types/build/Capabilities';
-import type { ReporterEntry } from '@wdio/types/build/Reporters';
-import { TEST_PLAN } from './test/TestPlan';
-import { addAttachment } from '@wdio/allure-reporter';
 import fs from 'fs';
+import * as dotenv from 'dotenv';
 dotenv.config();
 
 register({
 	baseUrl: tsConfig.compilerOptions.baseUrl,
-	paths: tsConfig.compilerOptions.paths,
+	paths: tsConfig.compilerOptions.paths
 });
 
 //* ---- ENVIRONMENT CONFIG ---- *:
-type TestEnvType =
-	| 'dev'
-	| 'sandbox'
-	| 'QA'
-	| 'staging'
-	| 'beta'
-	| 'prod'
-	| undefined;
-export const TEST_ENV: TestEnvType =
-	(process.env.TEST_ENV as TestEnvType) ?? 'QA'; // set QA as default just in case the env variable is not set
+type TestEnvType = 'dev' | 'sandbox' | 'QA' | 'staging' | 'uat' | 'prod' | undefined;
+export const TEST_ENV: TestEnvType = (process.env.TEST_ENV as TestEnvType) ?? 'QA'; // set QA as default just in case the env variable is not set
 const ENVIRONMENTS = {
 	dev: 'https://the-internet.herokuapp.com/',
 	sandbox: 'https://the-internet.herokuapp.com/',
 	QA: 'https://the-internet.herokuapp.com/',
 	staging: 'https://the-internet.herokuapp.com/',
-	beta: 'https://the-internet.herokuapp.com/',
-	prod: 'https://the-internet.herokuapp.com/',
+	uat: 'https://the-internet.herokuapp.com/',
+	prod: 'https://the-internet.herokuapp.com/'
 };
 const ENV_BASE_URL = ENVIRONMENTS[TEST_ENV];
 
@@ -43,7 +32,6 @@ const ENV_BASE_URL = ENVIRONMENTS[TEST_ENV];
 const onCI = process.env.CI ? true : false; // On CI, we always want it to be TRUE
 const isHEADLESS = onCI ? true : process.env.HEADLESS === 'true' ? true : false; // On CI, we always want to run headless
 const isDEBUG = onCI ? false : process.env.DEBUG === 'true' ? true : false; // On CI, we always want it to be FALSE
-const isREPLAY = process.env.REPLAY === 'true' ? true : false; // Only to be used on CI Pipelines (linux machine) true or false.
 const localTESTRAIL = process.env.USE_TESTRAIL === 'true' ? true : false;
 const withTESTRAIL = onCI ? true : localTESTRAIL;
 
@@ -63,85 +51,71 @@ const chromeArgs = [
 	'--enable-chrome-browser-cloud-management', //? to enable chrome browser cloud management (CBCM) and prevent warning message
 	'--disable-dev-shm-usage', //? The /dev/shm partition is too small in certain VM environments, causing Chrome to fail or crash. Use this flag to work-around this issue (a temporary directory will always be used to create anonymous shared memory files).
 	'--disable-infobars', //? Disables the "Chrome is being controlled by automated test software" infobar
-	'--window-size=1920,1080',
+	'--window-size=1920,1080'
 ];
-const replayioArgs = ['--disable-infobars', '--window-size=1920,1080'];
 if (isHEADLESS) chromeArgs.push('--headless', '--start-maximized');
-
-const binary = {
-	linux: '~/.replay/runtimes/chrome-linux/chrome',
-	mac: '../.replay/runtimes/Replay-Chromium.app/Contents/MacOS/Chromium',
-}; //? The path to the Chrome binary on tests are running on CI machine
-const binaryPath = process.env.IS_MAC ? binary.mac : binary.linux;
-const chromeOptions: ChromeOptions = {
-	// binary,
-	// detach,
-	args: isREPLAY ? replayioArgs : chromeArgs,
-	prefs: { 'download.default_directory': downloadPath },
-};
-if (isREPLAY) chromeOptions['binary'] = binaryPath; //? If running on CI, use the binary path, otherwise, use the default Chrome Browser automatically detected by WebdriverIO
-if (!isREPLAY) chromeOptions['detach'] = !onCI; //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
 
 const DEFAULT_Capabilities: RemoteCapabilities = [
 	{
-		maxInstances: 1,
 		browserName: 'chrome',
-		acceptInsecureCerts: true,
 		'goog:chromeOptions': {
-			// binary,
+			detach: !onCI, //? on CI, Chrome will be closed when the session is closed, on local, Chrome will stay open
 			args: chromeArgs,
-			prefs: { 'download.default_directory': downloadPath },
-		},
-	},
+			prefs: { 'download.default_directory': downloadPath }
+		}
+	}
 ];
 //* ---- Test Runs Strategy ---- *:
-type TestRunStrategyType =
-	| 'Smoke'
-	| 'Regression'
-	| 'Sanity'
-	| 'Suite'
-	| undefined;
-const TESTRAIL_RUN_STRATEGY: TestRunStrategyType =
-	(process.env.TESTRAIL_RUN_STRATEGY as TestRunStrategyType) ?? 'Suite';
+type TestRunStrategyType = 'Smoke' | 'Regression' | 'Sanity' | 'Suite' | undefined;
+const TESTRAIL_RUN_STRATEGY: TestRunStrategyType = (process.env.TESTRAIL_RUN_STRATEGY as TestRunStrategyType) ?? 'Suite';
 //? TESTRAIL_RUN_STRATEGY is used to create a custom name for the test run in TestRail. Depending on the CI file, the test run strategy can be set to Smoke, Regression, or Sanity
 
 //* ---- REPORTERS CONFIG ---- *:
 const reportsDir = path.resolve(__dirname, 'reports');
-// const allureReportRepoURL = 'https://upex-galaxy.github.io/webdriverio-template-gx';
-// const AllureConfig: ReporterEntry = [
-// 	'allure',
-// 	{
-// 		outputDir: reportsDir + '/allure-results',
-// 		reportedEnvironmentVars: {
-// 			ENVIRONMENT: TEST_ENV,
-// 			BROWSER: 'chrome', // default browser of this project
-// 			'📊 SMOKE Allure Report': allureReportRepoURL + '/smoke',
-// 			'📊 SANITY Allure Report': allureReportRepoURL + '/sanity',
-// 			'📊 REGRESSION Allure Report': allureReportRepoURL,
-// 		},
-// 		disableWebdriverStepsReporting: true,
-// 		disableWebdriverScreenshotsReporting: true,
-// 		disableMochaHooks: true,
-// 		addConsoleLogs: true,
-// 	},
-// ];
-// const VideoConfig: ReporterEntry = [
-// 	'video',
-// 	{
-// 		saveAllVideos: true, // If true, also saves videos for successful test cases
-// 		videoSlowdownMultiplier: 1, // Higher to get slower videos, lower for faster videos [Value 1-100]
-// 		videoRenderTimeout: 3 * 60 * 1000, // Maximum time to wait for a video to finish rendering (in ms).
-// 		videoFormat: 'mp4', // The video format to use //? This is a MUST for the video reporter to work!
-// 		//? outputDir by default is same as the wdio outputDir
-// 		maxTestNameCharacters: 350, // Maximum characters to use for the test name in the file name
-// 	},
-// ];
+const allureReportRepoURL = 'https://upex-galaxy.github.io/webdriverio-template-gx';
+const AllureConfig: ReporterEntry = [
+	'allure',
+	{
+		outputDir: reportsDir + '/allure-results',
+		reportedEnvironmentVars: {
+			ENVIRONMENT: TEST_ENV,
+			BROWSER: 'chrome', // default browser of this project
+			'📊 SMOKE Allure Report': allureReportRepoURL + '/smoke',
+			'📊 SANITY Allure Report': allureReportRepoURL + '/sanity',
+			'📊 REGRESSION Allure Report': allureReportRepoURL
+		},
+		disableWebdriverStepsReporting: true,
+		disableWebdriverScreenshotsReporting: true,
+		disableMochaHooks: true,
+		addConsoleLogs: true
+	}
+];
+const VideoConfig: ReporterEntry = [
+	'video',
+	{
+		//? outputDir by default is same as the wdio outputDir (reportsDir)
+		saveAllVideos: true, // If true, also saves videos for successful test cases
+		videoSlowdownMultiplier: 1, // Higher to get slower videos, lower for faster videos [Value 1-100]
+		videoRenderTimeout: 3 * 60 * 1000, // Maximum time to wait for a video to finish rendering (in ms).
+		videoFormat: 'mp4', // The video format to use //? This is a MUST for the video reporter to work!
+		maxTestNameCharacters: 350 // Maximum characters to use for the test name in the file name
+	}
+];
+const JUnitConfig: ReporterEntry = [
+	'junit',
+	{
+		outputDir: reportsDir + '/junit-results',
+		outputFileFormat: () => 'wdio-junit-test-reporter.xml',
+		suiteNameFormat: /[^a-zA-Z0-9@:|#-]+/,
+		classNameFormat: () => /[^a-zA-Z0-9@:|#-]+/
+	}
+];
 // const TestRailConfig: ReporterEntry = [
 // 	'testrail',
 // 	{
-// 		projectId: 2, // project id is here https://glasfunds.testrail.io/index.php?/projects/overview/2
-// 		suiteId: 8, // suite id is here https://glasfunds.testrail.io/index.php?/suites/view/8
-// 		domain: 'glasfunds.testrail.io',
+// 		projectId: 2, // project id is here https://<project>.testrail.io/index.php?/projects/overview/<projectId>
+// 		suiteId: 8, // suite id is here https://<project>.testrail.io/index.php?/suites/view/<suiteId>
+// 		domain: '<project>.testrail.io',
 // 		username: process.env.TESTRAIL_USERNAME,
 // 		apiToken: process.env.TESTRAIL_APIKEY,
 // 		runName: `Automated Test Run: ${TESTRAIL_RUN_STRATEGY}`, // custom name for the test run
@@ -150,18 +124,13 @@ const reportsDir = path.resolve(__dirname, 'reports');
 // 	},
 // ]; //? Learn about TestRail Importer: https://webdriver.io/docs/wdio-testrail-reporter/
 
-const defaultReportConfig: ReporterEntry[] = [
-	'spec',
-	// AllureConfig,
-	// VideoConfig,
-];
+const defaultReportConfig: ReporterEntry[] = ['spec', AllureConfig, VideoConfig, JUnitConfig];
 // const testRailReportConfig: ReporterEntry[] = [
 // 	'spec',
 // 	AllureConfig,
 // 	VideoConfig,
 // ];
-const ReportConfig =
-	/*withTESTRAIL ? testRailReportConfig :*/ defaultReportConfig;
+const ReportConfig = /*withTESTRAIL ? testRailReportConfig :*/ defaultReportConfig;
 //? If the USE_TESTRAIL env variable is set to true, the TestRail reporter will be used. Otherwise, the default reporters will be used.
 
 export const config: Options.Testrunner = {
@@ -174,32 +143,31 @@ export const config: Options.Testrunner = {
 		autoCompile: true,
 		tsNodeOpts: {
 			project: './tsconfig.json',
-			transpileOnly: true,
-		},
+			transpileOnly: true
+		}
 	},
-	headless: true, // default is false
+	headless: isHEADLESS, // default should be false
 	//
 	//* ==================
 	//* Specify Test Files
 	//* ==================
 	specs: ['./test/specs/**/*.test.ts'],
-	suites: TEST_PLAN,
+	suites: TEST_PLAN, //? This is the Test Plan file, where every test filePath will be mapped to a unique named variable in order to be used as Identificator Name, so it can be organized into the Test Plan in different applicable Suites. Please refer to the TestPlan.ts file for more information.
 	exclude: ['./test/specs/**/*.test.draft.ts'],
 	//
 	//* ============
 	//* Capabilities
 	//* ============
-	maxInstances: onCI ? 3 : 1, // the more the higher the load on the machine. keep it low for local testing
+	maxInstances: onCI ? 5 : 1, // the more instances, the higher the load on the machine. keep it low for local testing
 	capabilities: DEFAULT_Capabilities,
 	execArgv: isDEBUG ? ['--inspect'] : [],
-	automationProtocol: isREPLAY ? 'devtools' : 'webdriver',
 	//
 	//* ===================
 	//* Test Configurations
 	//* ===================
-	logLevel: isDEBUG ? 'debug' : 'info',
+	logLevel: 'debug', //? I suggest to keep it as debug to see all the logs in reports folder
 	bail: 0,
-	baseUrl: ENV_BASE_URL, // default is the QA environment //? available TEST_ENV options for Automation are: sandbox, QA, staging, beta, prod
+	baseUrl: ENV_BASE_URL, // default is the QA environment //? available TEST_ENV options for Automation are: sandbox, QA, staging, uat, prod
 	waitforTimeout: 10000, // Default timeout for all waitFor* commands. //? I think 10 seconds is enough for now.
 	connectionRetryTimeout: 120000,
 	connectionRetryCount: 3,
@@ -216,9 +184,7 @@ export const config: Options.Testrunner = {
 	mochaOpts: {
 		ui: 'bdd',
 		timeout: isDEBUG ? DEBUG_TimeoutInterval : DEFAULT_TimeoutInterval,
-		defaultTimeoutInterval: isDEBUG
-			? DEBUG_TimeoutInterval
-			: DEFAULT_TimeoutInterval,
+		defaultTimeoutInterval: isDEBUG ? DEBUG_TimeoutInterval : DEFAULT_TimeoutInterval
 	},
 	//
 	//* ===================
@@ -243,8 +209,6 @@ export const config: Options.Testrunner = {
 		console.log('🚀 -----> TestRail: ', withTESTRAIL);
 		console.log('🚀 -----> Headless: ', isHEADLESS);
 		console.log('🚀 -----> Debugger: ', isDEBUG);
-		console.log('🚀 -----> Replayio: ', isREPLAY);
-		console.log('🚀 -----> Chrome Options: ', chromeOptions);
 		// create test/screenshots dir if not exists:
 		if (!fs.existsSync(screenshotPath)) fs.mkdirSync(screenshotPath);
 		// create test/downloads dir if not exists:
@@ -341,11 +305,7 @@ export const config: Options.Testrunner = {
 		if (!passed) {
 			const screenshotFile = screenshotPath + '/' + testName + '.png';
 			await browser.saveScreenshot(screenshotFile);
-			addAttachment(
-				'❌FAILURE EVIDENCE: ' + testName + ' (Screenshot)',
-				fs.readFileSync(screenshotFile),
-				'image/png',
-			);
+			addAttachment('❌FAILURE EVIDENCE: ' + testName + ' (Screenshot)', fs.readFileSync(screenshotFile), 'image/png');
 		}
 	},
 	/**
@@ -394,7 +354,7 @@ export const config: Options.Testrunner = {
 		capabilities;
 		console.log('🧪------- Test Session Ended -------');
 		console.log('🧪 TEST RESULTS:', results);
-	},
+	}
 	/**
 	 * Gets executed when a refresh happens.
 	 * @param {string} oldSessionId session ID of the old session

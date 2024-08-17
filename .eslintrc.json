@@ -26,20 +26,13 @@
 		"arrow-spacing": ["warn", { "before": true, "after": true }],
 		"brace-style": ["warn", "1tbs", { "allowSingleLine": true }],
 		"curly": ["error", "multi"],
+		"eqeqeq": "warn",
 		"getter-return": ["warn"],
 		"indent": ["warn", "tab", { "SwitchCase": 1 }],
 		"linebreak-style": ["off"],
 		"no-multi-spaces": ["warn"],
 		"no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
 		"object-curly-spacing": ["warn", "always"],
-		"object-curly-newline": [
-			"error",
-			{
-				"ObjectExpression": { "multiline": true },
-				"ObjectPattern": { "multiline": true },
-				"ImportDeclaration": { "multiline": true }
-			}
-		],
 		"quotes": ["warn", "single"],
 		"semi": ["warn", "always"],
 		"space-before-blocks": ["warn"],
