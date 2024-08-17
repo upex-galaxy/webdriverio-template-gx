@@ -97,51 +97,51 @@ Este repositorio está configurado para ejecutar pruebas automatizadas mediante 
 -   Directamente en GitHub Actions, puedes activar manualmente el pipeline de Sanity especificando estos valores en la interfaz "Run Workflow":
 -   **Run Workflow Config**:
 
-          ```yml
-          inputs:
-              os:
-                  description: 🚀Select the OS
-                  required: true
-                  default: 'ubuntu-latest'
-                  type: choice
-                  options:
-                      - ubuntu-latest
-                      - ubuntu-22.04
-                      - macos-latest
-                      - windows-latest
-              environment:
-                  description: 🚀Select the Test Environment
-                  required: true
-                  default: 'QA'
-                  type: choice
-                  options: #? Orden de Deployments...
-                      - dev #? donde los developers work
-                      - sandbox #? donde los QA realizan smoke y exploratory testing.
-                      - QA #? donde los QA realizan smoke, sanity y regression testing.
-                      - staging #? donde los QA realizan smoke, sanity o regression testing.
-                      - uat #? donde los beta testers realizan acceptance testing.
-                      - prod #? donde los usuarios finales usan la App.
-              test_run:
-                  description: 🚀Select the Test Suite to Run
-                  required: true
-                  default: 'test/specs/another.e2e.ts' #! Example.
-                  type: string
-              xray_tx:
-                  description: 🚀Enter the Test Execution ID
-                  required: true
-                  default: 'GX3-1526' #! Example.
-                  type: string
-              xray_project:
-                  description: 🚀Select the Project Key
-                  required: true
-                  default: 'GX3' #! Example.
-                  type: choice
-                  options:
-                      - GX1
-                      - GX2
-                      - GX3
-                      - GX4
-          ```
+    -   ```yml
+        inputs:
+            os:
+                description: 🚀Select the OS
+                required: true
+                default: 'ubuntu-latest'
+                type: choice
+                options:
+                    - ubuntu-latest
+                    - ubuntu-22.04
+                    - macos-latest
+                    - windows-latest
+            environment:
+                description: 🚀Select the Test Environment
+                required: true
+                default: 'QA'
+                type: choice
+                options: #? Orden de Deployments...
+                    - dev #? donde los developers work
+                    - sandbox #? donde los QA realizan smoke y exploratory testing.
+                    - QA #? donde los QA realizan smoke, sanity y regression testing.
+                    - staging #? donde los QA realizan smoke, sanity o regression testing.
+                    - uat #? donde los beta testers realizan acceptance testing.
+                    - prod #? donde los usuarios finales usan la App.
+            test_run:
+                description: 🚀Select the Test Suite to Run
+                required: true
+                default: 'test/specs/another.e2e.ts' #! Example.
+                type: string
+            xray_tx:
+                description: 🚀Enter the Test Execution ID
+                required: true
+                default: 'GX3-1526' #! Example.
+                type: string
+            xray_project:
+                description: 🚀Select the Project Key
+                required: true
+                default: 'GX3' #! Example.
+                type: choice
+                options:
+                    - GX1
+                    - GX2
+                    - GX3
+                    - GX4
+        ```
 
     > **RECUERDA**: No necesitas cambiar el archivo yml en el repositorio, simplemente utiliza la interfaz "Run Workflow" de GitHub Actions para seleccionar la Suite de Pruebas y el ID de Ejecución de Pruebas de XRay para importarlo a Jira.
 
