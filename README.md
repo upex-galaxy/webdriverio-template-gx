@@ -4,7 +4,7 @@
 
 # 🧪 Testing Automation - WebdriverIO 👨🏻‍🚀 CI/CD
 
-### 🤖 Framework de WebdriverIO con TypeScript
+#### ✅ Repositorio Profesional de WebdriverIO con TypeScript
 
 #### ✅ Integrado con Allure Report, Grabación de Video y JUnit (Importar a Jira XRay)
 
@@ -111,7 +111,7 @@ Este repositorio está configurado para ejecutar pruebas automatizadas mediante 
 -   Ejecutar cualquier directorio de pruebas o una suite de pruebas específica con el pipeline `sanity.yml` (puedes importar los resultados de las pruebas a XRay con este).
 -   Ejecutar las pruebas de `Smoke` y `Regression` con el pipeline `regression.yml`.
 
-**> PIPELINES:**
+### **> PIPELINES:**
 
 -   **SanityTest** (Activación manual):
 
@@ -138,7 +138,7 @@ Este repositorio está configurado para ejecutar pruebas automatizadas mediante 
         -   Se puede configurar para que se active automáticamente después de que se complete y tenga éxito la prueba de Smoke.
         -   Se puede configurar para que se ejecute programadamente todos los días a la medianoche.
 
-**> Manual Trigger de los PIPELINES**:
+### **> Manual Trigger de los PIPELINES**:
 
 -   Directamente en GitHub Actions, puedes activar manualmente el pipeline de Sanity especificando estos valores en la interfaz "Run Workflow":
 -   **Run Workflow Config**:
@@ -191,7 +191,7 @@ Este repositorio está configurado para ejecutar pruebas automatizadas mediante 
 
     > **RECUERDA**: No necesitas cambiar el archivo yml en el repositorio, simplemente utiliza la interfaz "Run Workflow" de GitHub Actions para seleccionar la Suite de Pruebas y el ID de Ejecución de Pruebas de XRay para importarlo a Jira.
 
-**> Acciones Extras de los PIPELINES:**
+### **> Acciones Extras de los PIPELINES:**
 
 -   **Guardar capturas de pantalla** de las pruebas fallidas y subirlas como artefacto de CI
 -   **Guardar cada archivo de log** en una carpeta y subirlo como artefacto de CI
