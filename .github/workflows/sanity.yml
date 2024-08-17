@@ -9,7 +9,7 @@ on:
   #* manual trigger:
   workflow_dispatch:
     inputs:
-      os:
+      system:
         description: 🚀Select the OS
         required: true
         default: 'ubuntu-latest'
@@ -55,7 +55,7 @@ on:
 jobs:
   SanityTest:
     #? El Pipeline "Sanity" es una estrategia de prueba perfecta para verificar que un Módulo entero de la App o una funcionalidad específica funcionen como se espera. Se puede realizar pruebas de cualquier nivel (Unit, Integration, E2E) para esta estrategia de pruebas. También se usa como "Story Testing" para ejecuciones de pruebas de cobertura de US (importar resultados a Jira XRay).
-    runs-on: ${{ github.event.inputs.os }}
+    runs-on: ${{ github.event.inputs.system }}
     environment:
       name: ${{ github.event.inputs.environment }}
     env:

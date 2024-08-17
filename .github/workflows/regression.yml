@@ -8,7 +8,7 @@ on:
   #* manual trigger:
   workflow_dispatch:
     inputs:
-      os:
+      system:
         description: 🚀Select the OS
         required: true
         default: 'ubuntu-latest'
@@ -34,7 +34,7 @@ on:
 jobs:
   SmokeTest:
     #? El Pipeline "Smoke" es una estrategia de prueba perfecta para verificar que todos los servicios de la aplicación funcionen como se espera después de nuevas implementaciones y lanzamientos, y útil antes de correr una Regresión. Se recomienda pruebas a nivel "Integration" para esta estraegia de pruebas.
-    runs-on: ${{ github.event.inputs.os }}
+    runs-on: ${{ github.event.inputs.system }}
     environment:
       name: ${{ github.event.inputs.environment }}
     env:
@@ -83,7 +83,7 @@ jobs:
 
   RegressionTesting:
     #? El Pipeline "Regression" es una estrategia de prueba perfecta para verificar que todas las funcionalidades de la aplicación funcionen como se espera después de nuevas implementaciones y lanzamientos. Se recomienda pruebas a nivel "End-to-End" para esta estrategia de pruebas.
-    runs-on: ${{ github.event.inputs.os }}
+    runs-on: ${{ github.event.inputs.system }}
     environment:
       name: ${{ github.event.inputs.environment }}
     env:

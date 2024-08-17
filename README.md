@@ -99,7 +99,7 @@ Este repositorio está configurado para ejecutar pruebas automatizadas mediante 
 
     -   ```yml
         inputs:
-            os:
+            system:
                 description: 🚀Select the OS
                 required: true
                 default: 'ubuntu-latest'
