@@ -1,0 +1,1 @@
+{"e2f2662e4a823884a251f090ab772c7d":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"555d6a2d5656deac","reportUrl":"https://upex-galaxy.github.io/webdriverio-template-gx/sanity/GX3-1526/1//#testresult/555d6a2d5656deac","status":"passed","time":{"start":1723926100549,"stop":1723926102777,"duration":2228}}]}}
