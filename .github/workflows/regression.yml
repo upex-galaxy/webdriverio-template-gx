@@ -82,6 +82,7 @@ jobs:
         retention-days: 15
 
   RegressionTesting:
+    needs: [SmokeTest] #? correrá después de que el SmokeTest haya terminado exitosamente.
     #? El Pipeline "Regression" es una estrategia de prueba perfecta para verificar que todas las funcionalidades de la aplicación funcionen como se espera después de nuevas implementaciones y lanzamientos. Se recomienda pruebas a nivel "End-to-End" para esta estrategia de pruebas.
     runs-on: ${{ github.event.inputs.system }}
     environment:
@@ -179,8 +180,8 @@ jobs:
         #* -----------------------------------------------------------------------
 
   Ari-Slack-Notification:
-    needs: [RegressionTesting]
-    if: always() #? will always run after the RegressionTesting job
+    needs: [SmokeTest, RegressionTesting]
+    if: always() #? correrá después de que el SmokeTest y RegressionTesting hayan terminado.
     runs-on: ubuntu-latest
     steps:
     - name: 🔔 Slack Notification
@@ -189,6 +190,6 @@ jobs:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_USERNAME: Ari✨
         SLACK_MESSAGE: '🧪(${{ github.repository }}): ${{ github.actor }} triggered Regression Testing🚀'
-        SLACK_COLOR: ${{ job.status }}
+        SLACK_COLOR: ${{ needs.RegressionTesting.result }}
         SLACK_ICON: ${{ secrets.ARI_PROFILE }}
 
