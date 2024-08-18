@@ -16,15 +16,15 @@ register({
 });
 
 //* ---- ENVIRONMENT CONFIG ---- *:
-type TestEnvType = 'dev' | 'sandbox' | 'QA' | 'staging' | 'uat' | 'prod' | undefined;
+type TestEnvType = 'DEV' | 'SANDBOX' | 'QA' | 'STAGING' | 'UAT' | 'PROD' | undefined;
 export const TEST_ENV: TestEnvType = (process.env.TEST_ENV as TestEnvType) ?? 'QA'; // set QA as default just in case the env variable is not set
 const ENVIRONMENTS = {
-	dev: 'https://the-internet.herokuapp.com/',
-	sandbox: 'https://the-internet.herokuapp.com/',
+	DEV: 'https://the-internet.herokuapp.com/',
+	SANDBOX: 'https://the-internet.herokuapp.com/',
 	QA: 'https://the-internet.herokuapp.com/',
-	staging: 'https://the-internet.herokuapp.com/',
-	uat: 'https://the-internet.herokuapp.com/',
-	prod: 'https://the-internet.herokuapp.com/'
+	STAGING: 'https://the-internet.herokuapp.com/',
+	UAT: 'https://the-internet.herokuapp.com/',
+	PROD: 'https://the-internet.herokuapp.com/'
 };
 const ENV_BASE_URL = ENVIRONMENTS[TEST_ENV];
 
@@ -167,7 +167,7 @@ export const config: Options.Testrunner = {
 	//* ===================
 	logLevel: 'debug', //? I suggest to keep it as debug to see all the logs in reports folder
 	bail: 0,
-	baseUrl: ENV_BASE_URL, // default is the QA environment //? available TEST_ENV options for Automation are: sandbox, QA, staging, uat, prod
+	baseUrl: ENV_BASE_URL, // default is QA environment //? options are in the ENVIRONMENTS object
 	waitforTimeout: 10000, // Default timeout for all waitFor* commands. //? I think 10 seconds is enough for now.
 	connectionRetryTimeout: 120000,
 	connectionRetryCount: 3,
