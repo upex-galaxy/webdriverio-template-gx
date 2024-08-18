@@ -94,11 +94,11 @@ jobs:
         path: test/screenshots
         retention-days: 15
 
-    - name: 📡 Upload Artifact - Log Reports
+    - name: 📡 Upload Artifact - Sanity Log Reports
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: wdio-log-reports
+        name: sanity-log-reports
         path: reports
         retention-days: 15
 
