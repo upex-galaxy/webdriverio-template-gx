@@ -1,0 +1,5 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Sun Aug 18 02:23:42 GMT 2024","Sun Aug 18 02:23:44 GMT 2024","1342","","GX3-124: Another","","","","GX3-124 TC1: Other Test Case Example",""
+"passed","Sun Aug 18 02:23:45 GMT 2024","Sun Aug 18 02:23:46 GMT 2024","1060","","GX3-123: Auth","","","","GX3-123 TC3: Should login with user C",""
+"passed","Sun Aug 18 02:23:42 GMT 2024","Sun Aug 18 02:23:44 GMT 2024","1436","","GX3-123: Auth","","","","GX3-123 TC1: Should login with user Z",""
+"passed","Sun Aug 18 02:23:44 GMT 2024","Sun Aug 18 02:23:45 GMT 2024","1127","","GX3-123: Auth","","","","GX3-123 TC2: Should login with user A",""
