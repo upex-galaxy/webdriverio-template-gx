@@ -214,7 +214,7 @@ La generación de reportes de Allure está integrada en este marco para obtener 
 2. Ejecuta las pruebas que prefieras
 3. Genera y abre el informe de Allure simplemente ejecutando: `pnpm run allure:report`
 
-## 🧪 Estrategia para Test Directory (Nomenclaturas)
+## 🧪 Estrategia para Test Structure (Nomenclaturas)
 
 -   **Nomenclatura: Page Object Model (Patrón de Diseño):**
 
