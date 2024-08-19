@@ -1,6 +1,7 @@
-# 🧪 Testing Automation - WebdriverIO 👨🏻‍🚀 CI/CD
+<!--! MODELO STANDARD de UPEX para Testing Automation (TAUS) -->
+# 🧪 Testing Automation - *{AutomationFrameworkName}* 👨🏻‍🚀 CI/CD
 <!--todo: Reemplazar la variable <repo_name> con el nombre real del repo -->
-[![🧪Pipeline Regression in QA](https://github.com/upex-galaxy/webdriverio-template-gx/actions/workflows/regression.yml/badge.svg)](https://github.com/upex-galaxy/webdriverio-template-gx/actions/workflows/regression.yml)
+[![🧪Pipeline Regression in QA](https://github.com/upex-galaxy/<repo_name>/actions/workflows/regression.yml/badge.svg)](https://github.com/upex-galaxy/<repo_name>/actions/workflows/regression.yml)
 
 <!-- Workspace (Require-Badge) -->
 [![vscode-logo]][vscode-site]
@@ -9,17 +10,30 @@
 [![github-actions]][github-actions-docu]
 <!--todo: MARKDOWN BADGES TEMPLATE (remover lo que no se usa en el repo) -->
 <!-- Programming Language -->
+[![javascript-logo]][javascript-site]
 [![typescript-logo]][typescript-site]
+[![java-logo]][java-site]
+[![python-logo]][python-site]
+[![csharp-logo]][csharp-site]
 <!-- Testing Frameworks -->
+[![playwright-logo]][playwright-docu]
+[![cypress-logo]][cypress-docu]
+[![selenium-logo]][selenium-docu]
 [![wdio-logo]][wdio-docu]
+[![k6-logo]][k6-docu]
 <!-- Package Manager -->
 [![node-logo]][node-site]
+[![gradle]][gradle-docu]
+[![Miniconda]][conda-docu]
+[![npm]][npm-docu]
 [![pnpm]][pnpm-docu]
+[![yarn]][yarn-docu]
 <!-- Integrations -->
 [![eslint]][eslint-site]
+[![grafana]][grafana-site]
 [![allure]][allure-docu]
 
-Este repositorio contiene un marco de automatización de pruebas para el proyecto **WebdriverIO**. El marco está diseñado para ejecutar pruebas de regresión, pruebas de humo y pruebas de integración en un entorno de CI/CD. El marco de automatización está construido con las mejores prácticas y patrones de diseño para garantizar la escalabilidad, mantenibilidad y reutilización del código de prueba.
+Este repositorio contiene un marco de automatización de pruebas para el proyecto **{AutomationFrameworkName}**. El marco está diseñado para ejecutar pruebas de regresión, pruebas de humo y pruebas de integración en un entorno de CI/CD. El marco de automatización está construido con las mejores prácticas y patrones de diseño para garantizar la escalabilidad, mantenibilidad y reutilización del código de prueba.
 
 ## Requisitos para Usar el Repositorio
 
@@ -40,18 +54,46 @@ Antes de comenzar a trabajar con el repositorio, asegúrate de cumplir con los s
 3. **Instalar el Gestor de Paquetes y Dependencias**
 
    Dependiendo del framework de automatización utilizado en el repositorio, asegúrate de instalar el **Package Manager** adecuado para lenguaje de programación y framework de pruebas:
+   <!--todo: PACAKGE MANAGER TEMPLATE (remueve los fragmentos que no aplican) -->
 
    - **Para Frameworks con JavaScript/TypeScript:**
       - **Node.js**: Requerido si el proyecto utiliza frameworks como WebdriverIO, Cypress, Playwright o SeleniumJS. Instalando Node.js, obtendrás automáticamente npm como gestor de paquetes y JavaScript runtime.
          - [Instalar Node.js (Versión LTS)](https://nodejs.org/)
       - **Gestor de Paquetes Node**: Identifica cuál es el gestor de paquetes adecuado para el repositorio inspeccionando el archivo de bloqueo (`.lock`) en el directorio raíz. Esto te indicará si debes usar `npm`, `pnpm` o `yarn` para ejecutar los scripts del proyecto.
+         - **npm**: Si ves `package-lock.json`, usas `npm`.
+            - Instalación: npm viene preinstalado con Node.js.
          - **pnpm**: Si ves `pnpm-lock.yaml`, usas `pnpm`.
             - Instalación: `npm install -g pnpm` [tip: Por qué usar pnpm](https://pnpm.io/motivation)
+         - **yarn**: Si ves `yarn.lock`, usas `yarn`.
+            - Instalación: `npm install -g yarn`
          - [Ver una Comparación entre estos Gestores](https://pnpm.io/feature-comparison)
+  
+   - **Para Frameworks con Java:**
+      - **Java Development Kit (JDK)**: Requerido para proyectos Java y Selenium. Asegúrate de instalar la versión adecuada de JDK según las necesidades del proyecto.
+         - [Instalar JDK](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+      - **SDKMAN (sdk)**: TE RECOMENDAMOS instalarlo para gestionar múltiples versiones de JDK, además de poder instalar Maven y Gradle con facilidad.
+            - [Instalar SDKMAN](https://sdkman.io/install)
+            - [Instalaciones con SDK](https://sdkman.io/sdks)
+      - **Gestor de Paquetes Java**: Dependiendo del proyecto, asegúrate de instalar el gestor de paquetes adecuado para Java:
+         - **Maven (mvn)**: Usado en proyectos Java para la gestión de dependencias y la ejecución de pruebas.
+            - [Instalar Maven](https://maven.apache.org/install.html)
+         - **Gradle (gradle)**: Alternativa a Maven, especialmente útil en proyectos más grandes o modernos.
+            - [Instalar Gradle](https://gradle.org/install/)
+         - [Ver una Comparación entre estos Gestores](https://gradle.org/maven-vs-gradle/)
+
+   - **Para Frameworks con Python:**
+      - **Miniconda**: Recomendado si el proyecto está basado en Python, permitiendo el manejo de entornos y paquetes a través de `conda`. Miniconda es una versión ligera de Anaconda.
+         - [Instalar Miniconda](https://docs.anaconda.com/miniconda/)
+      - **Conda**: Gestor de paquetes y entornos de Python. Se instala automáticamente con Miniconda.
+         - [Documentación de Conda](https://docs.conda.io/projects/conda/en/stable/user-guide/getting-started.html)
 
 4. **CLI del Framework de Automatización**
    Por último, asegúrate de instalar la CLI específica del framework de automatización utilizado en el proyecto (preferiblemente de forma global porque podrías necesitarla en diferentes proyectos):
+   <!--todo: CLI (remueve la línea que no aplica al Framework) -->
    - **WebdriverIO**: `npm install -g @wdio/cli`
+   - **Cypress**: `npm install -g cypress`
+   - **Playwright**: `npm install -g playwright`
+   - **Selenium**: La instalación de la CLI dependerá del lenguaje utilizado.
 
 ---
 
@@ -81,6 +123,7 @@ Pasos generales para comenzar a trabajar con el repositorio:
    Si el proyecto necesita variables de Ambiente, crea tu archivo `.env` en la directorio root del proyecto para guardar las variables de environment (revisa el el archivo de config del framework para ver qué necesitas) y agregarlo al `.gitignore`.
 
 5. **Conoce y ejecuta scripts del `package.json`**:
+   <!--todo: Script de Node.js (remueve este último Paso si el repo NO usa Node.js) -->
    Cada repositorio tiene scripts predefinidos para ejecutar pruebas, suites, y reportes.
    Revisa el archivo `package.json` para ver los scripts disponibles para ejecutar en la terminal.
 
@@ -354,6 +397,21 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
          }
          ```
 
+      - Estructura básica de POM en **WebdriverIO con Typescript:**
+
+         ```typescript
+         import { $ } from '@wdio/globals';
+         class LoginPage {
+            // Elementos de la Página
+            get loginButton() { return $('button[type="submit"]') };
+
+            async submitLogin() { // Método de Acción
+               await this.loginButton.click();
+            }
+         }
+         export default new LoginPage();
+         ```
+
     - Para Java: `**Page.java` - ejemplo: `LoginPage.java`
       - Estructura básica de POM en **Selenium con Java:**
 
@@ -542,22 +600,48 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
 [github-actions]: https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white
 [github-actions-docu]: https://docs.github.com/en/actions
 <!-- Programming Languages -->
+[javascript-logo]: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
+[javascript-site]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 [typescript-logo]: https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white
 [typescript-site]: https://www.typescriptlang.org/
+[java-logo]: https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white
+[java-site]: https://www.java.com/
+[python-logo]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
+[python-site]: https://www.python.org/
+[csharp-logo]: https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white
+[csharp-site]: https://docs.microsoft.com/en-us/dotnet/csharp/
 
 <!-- Testing Frameworks -->
+[playwright-logo]: https://img.shields.io/badge/playwright-black?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMzYuNDQ0IDIyMS41NTZDMTIzLjU1OCAyMjUuMjEzIDExNS4xMDQgMjMxLjYyNSAxMDkuNTM1IDIzOC4wMzJDMTE0Ljg2OSAyMzMuMzY0IDEyMi4wMTQgMjI5LjA4IDEzMS42NTIgMjI2LjM0OEMxNDEuNTEgMjIzLjU1NCAxNDkuOTIgMjIzLjU3NCAxNTYuODY5IDIyNC45MTVWMjE5LjQ4MUMxNTAuOTQxIDIxOC45MzkgMTQ0LjE0NSAyMTkuMzcxIDEzNi40NDQgMjIxLjU1NlpNMTA4Ljk0NiAxNzUuODc2TDYxLjA4OTUgMTg4LjQ4NEM2MS4wODk1IDE4OC40ODQgNjEuOTYxNyAxODkuNzE2IDYzLjU3NjcgMTkxLjM2TDEwNC4xNTMgMTgwLjY2OEMxMDQuMTUzIDE4MC42NjggMTAzLjU3OCAxODguMDc3IDk4LjU4NDcgMTk0LjcwNUMxMDguMDMgMTg3LjU1OSAxMDguOTQ2IDE3NS44NzYgMTA4Ljk0NiAxNzUuODc2Wk0xNDkuMDA1IDI4OC4zNDdDODEuNjU4MiAzMDYuNDg2IDQ2LjAyNzIgMjI4LjQzOCAzNS4yMzk2IDE4Ny45MjhDMzAuMjU1NiAxNjkuMjI5IDI4LjA3OTkgMTU1LjA2NyAyNy41IDE0NS45MjhDMjcuNDM3NyAxNDQuOTc5IDI3LjQ2NjUgMTQ0LjE3OSAyNy41MzM2IDE0My40NDZDMjQuMDQgMTQzLjY1NyAyMi4zNjc0IDE0NS40NzMgMjIuNzA3NyAxNTAuNzIxQzIzLjI4NzYgMTU5Ljg1NSAyNS40NjMzIDE3NC4wMTYgMzAuNDQ3MyAxOTIuNzIxQzQxLjIzMDEgMjMzLjIyNSA3Ni44NjU5IDMxMS4yNzMgMTQ0LjIxMyAyOTMuMTM0QzE1OC44NzIgMjg5LjE4NSAxNjkuODg1IDI4MS45OTIgMTc4LjE1MiAyNzIuODFDMTcwLjUzMiAyNzkuNjkyIDE2MC45OTUgMjg1LjExMiAxNDkuMDA1IDI4OC4zNDdaTTE2MS42NjEgMTI4LjExVjEzMi45MDNIMTg4LjA3N0MxODcuNTM1IDEzMS4yMDYgMTg2Ljk4OSAxMjkuNjc3IDE4Ni40NDcgMTI4LjExSDE2MS42NjFaIiBmaWxsPSIjMkQ0NTUyIi8+CjxwYXRoIGQ9Ik0xOTMuOTgxIDE2Ny41ODRDMjA1Ljg2MSAxNzAuOTU4IDIxMi4xNDQgMTc5LjI4NyAyMTUuNDY1IDE4Ni42NThMMjI4LjcxMSAxOTAuNDJDMjI4LjcxMSAxOTAuNDIgMjI2LjkwNCAxNjQuNjIzIDIwMy41NyAxNTcuOTk1QzE4MS43NDEgMTUxLjc5MyAxNjguMzA4IDE3MC4xMjQgMTY2LjY3NCAxNzIuNDk2QzE3My4wMjQgMTY3Ljk3MiAxODIuMjk3IDE2NC4yNjggMTkzLjk4MSAxNjcuNTg0Wk0yOTkuNDIyIDE4Ni43NzdDMjc3LjU3MyAxODAuNTQ3IDI2NC4xNDUgMTk4LjkxNiAyNjIuNTM1IDIwMS4yNTVDMjY4Ljg5IDE5Ni43MzYgMjc4LjE1OCAxOTMuMDMxIDI4OS44MzcgMTk2LjM2MkMzMDEuNjk4IDE5OS43NDEgMzA3Ljk3NiAyMDguMDYgMzExLjMwNyAyMTUuNDM2TDMyNC41NzIgMjE5LjIxMkMzMjQuNTcyIDIxOS4yMTIgMzIyLjczNiAxOTMuNDEgMjk5LjQyMiAxODYuNzc3Wk0yODYuMjYyIDI1NC43OTVMMTc2LjA3MiAyMjMuOTlDMTc2LjA3MiAyMjMuOTkgMTc3LjI2NSAyMzAuMDM4IDE4MS44NDIgMjM3Ljg2OUwyNzQuNjE3IDI2My44MDVDMjgyLjI1NSAyNTkuMzg2IDI4Ni4yNjIgMjU0Ljc5NSAyODYuMjYyIDI1NC43OTVaTTIwOS44NjcgMzIxLjEwMkMxMjIuNjE4IDI5Ny43MSAxMzMuMTY2IDE4Ni41NDMgMTQ3LjI4NCAxMzMuODY1QzE1My4wOTcgMTEyLjE1NiAxNTkuMDczIDk2LjAyMDMgMTY0LjAyOSA4NS4yMDRDMTYxLjA3MiA4NC41OTUzIDE1OC42MjMgODYuMTUyOSAxNTYuMjAzIDkxLjA3NDZDMTUwLjk0MSAxMDEuNzQ3IDE0NC4yMTIgMTE5LjEyNCAxMzcuNyAxNDMuNDVDMTIzLjU4NiAxOTYuMTI3IDExMy4wMzggMzA3LjI5IDIwMC4yODMgMzMwLjY4MkMyNDEuNDA2IDM0MS42OTkgMjczLjQ0MiAzMjQuOTU1IDI5Ny4zMjMgMjk4LjY1OUMyNzQuNjU1IDMxOS4xOSAyNDUuNzE0IDMzMC43MDEgMjA5Ljg2NyAzMjEuMTAyWiIgZmlsbD0iIzJENDU1MiIvPgo8cGF0aCBkPSJNMTYxLjY2MSAyNjIuMjk2VjIzOS44NjNMOTkuMzMyNCAyNTcuNTM3Qzk5LjMzMjQgMjU3LjUzNyAxMDMuOTM4IDIzMC43NzcgMTM2LjQ0NCAyMjEuNTU2QzE0Ni4zMDIgMjE4Ljc2MiAxNTQuNzEzIDIxOC43ODEgMTYxLjY2MSAyMjAuMTIzVjEyOC4xMUgxOTIuODY5QzE4OS40NzEgMTE3LjYxIDE4Ni4xODQgMTA5LjUyNiAxODMuNDIzIDEwMy45MDlDMTc4Ljg1NiA5NC42MTIgMTc0LjE3NCAxMDAuNzc1IDE2My41NDUgMTA5LjY2NUMxNTYuMDU5IDExNS45MTkgMTM3LjEzOSAxMjkuMjYxIDEwOC42NjggMTM2LjkzM0M4MC4xOTY2IDE0NC42MSA1Ny4xNzkgMTQyLjU3NCA0Ny41NzUyIDE0MC45MTFDMzMuOTYwMSAxMzguNTYyIDI2LjgzODcgMTM1LjU3MiAyNy41MDQ5IDE0NS45MjhDMjguMDg0NyAxNTUuMDYyIDMwLjI2MDUgMTY5LjIyNCAzNS4yNDQ1IDE4Ny45MjhDNDYuMDI3MiAyMjguNDMzIDgxLjY2MyAzMDYuNDgxIDE0OS4wMSAyODguMzQyQzE2Ni42MDIgMjgzLjYwMiAxNzkuMDE5IDI3NC4yMzMgMTg3LjYyNiAyNjIuMjkxSDE2MS42NjFWMjYyLjI5NlpNNjEuMDg0OCAxODguNDg0TDEwOC45NDYgMTc1Ljg3NkMxMDguOTQ2IDE3NS44NzYgMTA3LjU1MSAxOTQuMjg4IDg5LjYwODcgMTk5LjAxOEM3MS42NjE0IDIwMy43NDMgNjEuMDg0OCAxODguNDg0IDYxLjA4NDggMTg4LjQ4NFoiIGZpbGw9IiNFMjU3NEMiLz4KPHBhdGggZD0iTTM0MS43ODYgMTI5LjE3NEMzMjkuMzQ1IDEzMS4zNTUgMjk5LjQ5OCAxMzQuMDcyIDI2Mi42MTIgMTI0LjE4NUMyMjUuNzE2IDExNC4zMDQgMjAxLjIzNiA5Ny4wMjI0IDE5MS41MzcgODguODk5NEMxNzcuNzg4IDc3LjM4MzQgMTcxLjc0IDY5LjM4MDIgMTY1Ljc4OCA4MS40ODU3QzE2MC41MjYgOTIuMTYzIDE1My43OTcgMTA5LjU0IDE0Ny4yODQgMTMzLjg2NkMxMzMuMTcxIDE4Ni41NDMgMTIyLjYyMyAyOTcuNzA2IDIwOS44NjcgMzIxLjA5OEMyOTcuMDkzIDM0NC40NyAzNDMuNTMgMjQyLjkyIDM1Ny42NDQgMTkwLjIzOEMzNjQuMTU3IDE2NS45MTcgMzY3LjAxMyAxNDcuNSAzNjcuNzk5IDEzNS42MjVDMzY4LjY5NSAxMjIuMTczIDM1OS40NTUgMTI2LjA3OCAzNDEuNzg2IDEyOS4xNzRaTTE2Ni40OTcgMTcyLjc1NkMxNjYuNDk3IDE3Mi43NTYgMTgwLjI0NiAxNTEuMzcyIDIwMy41NjUgMTU4QzIyNi44OTkgMTY0LjYyOCAyMjguNzA2IDE5MC40MjUgMjI4LjcwNiAxOTAuNDI1TDE2Ni40OTcgMTcyLjc1NlpNMjIzLjQyIDI2OC43MTNDMTgyLjQwMyAyNTYuNjk4IDE3Ni4wNzcgMjIzLjk5IDE3Ni4wNzcgMjIzLjk5TDI4Ni4yNjIgMjU0Ljc5NkMyODYuMjYyIDI1NC43OTEgMjY0LjAyMSAyODAuNTc4IDIyMy40MiAyNjguNzEzWk0yNjIuMzc3IDIwMS40OTVDMjYyLjM3NyAyMDEuNDk1IDI3Ni4xMDcgMTgwLjEyNiAyOTkuNDIyIDE4Ni43NzNDMzIyLjczNiAxOTMuNDExIDMyNC41NzIgMjE5LjIwOCAzMjQuNTcyIDIxOS4yMDhMMjYyLjM3NyAyMDEuNDk1WiIgZmlsbD0iIzJFQUQzMyIvPgo8cGF0aCBkPSJNMTM5Ljg4IDI0Ni4wNEw5OS4zMzI0IDI1Ny41MzJDOTkuMzMyNCAyNTcuNTMyIDEwMy43MzcgMjMyLjQ0IDEzMy42MDcgMjIyLjQ5NkwxMTAuNjQ3IDEzNi4zM0wxMDguNjYzIDEzNi45MzNDODAuMTkxOCAxNDQuNjExIDU3LjE3NDIgMTQyLjU3NCA0Ny41NzA0IDE0MC45MTFDMzMuOTU1NCAxMzguNTYzIDI2LjgzNCAxMzUuNTcyIDI3LjUwMDEgMTQ1LjkyOUMyOC4wOCAxNTUuMDYzIDMwLjI1NTcgMTY5LjIyNCAzNS4yMzk3IDE4Ny45MjlDNDYuMDIyNSAyMjguNDMzIDgxLjY1ODMgMzA2LjQ4MSAxNDkuMDA1IDI4OC4zNDJMMTUwLjk4OSAyODcuNzE5TDEzOS44OCAyNDYuMDRaTTYxLjA4NDggMTg4LjQ4NUwxMDguOTQ2IDE3NS44NzZDMTA4Ljk0NiAxNzUuODc2IDEwNy41NTEgMTk0LjI4OCA4OS42MDg3IDE5OS4wMThDNzEuNjYxNSAyMDMuNzQzIDYxLjA4NDggMTg4LjQ4NSA2MS4wODQ4IDE4OC40ODVaIiBmaWxsPSIjRDY1MzQ4Ii8+CjxwYXRoIGQ9Ik0yMjUuMjcgMjY5LjE2M0wyMjMuNDE1IDI2OC43MTJDMTgyLjM5OCAyNTYuNjk4IDE3Ni4wNzIgMjIzLjk5IDE3Ni4wNzIgMjIzLjk5TDIzMi44OSAyMzkuODcyTDI2Mi45NzEgMTI0LjI4MUwyNjIuNjA3IDEyNC4xODVDMjI1LjcxMSAxMTQuMzA0IDIwMS4yMzIgOTcuMDIyNCAxOTEuNTMyIDg4Ljg5OTRDMTc3Ljc4MyA3Ny4zODM0IDE3MS43MzUgNjkuMzgwMiAxNjUuNzgzIDgxLjQ4NTdDMTYwLjUyNiA5Mi4xNjMgMTUzLjc5NyAxMDkuNTQgMTQ3LjI4NCAxMzMuODY2QzEzMy4xNzEgMTg2LjU0MyAxMjIuNjIzIDI5Ny43MDYgMjA5Ljg2NyAzMjEuMDk3TDIxMS42NTUgMzIxLjVMMjI1LjI3IDI2OS4xNjNaTTE2Ni40OTcgMTcyLjc1NkMxNjYuNDk3IDE3Mi43NTYgMTgwLjI0NiAxNTEuMzcyIDIwMy41NjUgMTU4QzIyNi44OTkgMTY0LjYyOCAyMjguNzA2IDE5MC40MjUgMjI4LjcwNiAxOTAuNDI1TDE2Ni40OTcgMTcyLjc1NloiIGZpbGw9IiMxRDhEMjIiLz4KPHBhdGggZD0iTTE0MS45NDYgMjQ1LjQ1MUwxMzEuMDcyIDI0OC41MzdDMTMzLjY0MSAyNjMuMDE5IDEzOC4xNjkgMjc2LjkxNyAxNDUuMjc2IDI4OS4xOTVDMTQ2LjUxMyAyODguOTIyIDE0Ny43NCAyODguNjg3IDE0OSAyODguMzQyQzE1Mi4zMDIgMjg3LjQ1MSAxNTUuMzY0IDI4Ni4zNDggMTU4LjMxMiAyODUuMTQ1QzE1MC4zNzEgMjczLjM2MSAxNDUuMTE4IDI1OS43ODkgMTQxLjk0NiAyNDUuNDUxWk0xMzcuNyAxNDMuNDUxQzEzMi4xMTIgMTY0LjMwNyAxMjcuMTEzIDE5NC4zMjYgMTI4LjQ4OSAyMjQuNDM2QzEzMC45NTIgMjIzLjM2NyAxMzMuNTU0IDIyMi4zNzEgMTM2LjQ0NCAyMjEuNTUxTDEzOC40NTcgMjIxLjEwMUMxMzYuMDAzIDE4OC45MzkgMTQxLjMwOCAxNTYuMTY1IDE0Ny4yODQgMTMzLjg2NkMxNDguNzk5IDEyOC4yMjUgMTUwLjMxOCAxMjIuOTc4IDE1MS44MzIgMTE4LjA4NUMxNDkuMzkzIDExOS42MzcgMTQ2Ljc2NyAxMjEuMjI4IDE0My43NzYgMTIyLjg2N0MxNDEuNzU5IDEyOS4wOTMgMTM5LjcyMiAxMzUuODk4IDEzNy43IDE0My40NTFaIiBmaWxsPSIjQzA0QjQxIi8+Cjwvc3ZnPgo=
+[playwright-docu]: https://playwright.dev/docs/intro
+[cypress-logo]: https://img.shields.io/badge/-cypress-%23E5E5E5?style=for-the-badge&logo=cypress&logoColor=058a5e
+[cypress-docu]: https://docs.cypress.io/guides/getting-started/installing-cypress
+[selenium-logo]: https://img.shields.io/badge/-selenium-%43B02A?style=for-the-badge&logo=selenium&logoColor=white
+[selenium-docu]: https://www.selenium.dev/documentation/overview/
 [wdio-logo]: https://img.shields.io/badge/webdriverio-black?logo=webdriverio&style=for-the-badge
 [wdio-docu]: https://webdriver.io/docs/gettingstarted
+[k6-logo]: https://img.shields.io/badge/k6-black?logo=k6&style=for-the-badge
+[k6-docu]: https://grafana.com/docs/k6/latest/
 
 <!-- Package Managers -->
 [node-logo]: https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white
 [node-site]: https://nodejs.org/
+[gradle]: https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white
+[gradle-docu]: https://gradle.org
+[Miniconda]: https://img.shields.io/badge/Miniconda-%2344A833.svg?style=for-the-badge&logo=anaconda&logoColor=white
+[conda-docu]: https://docs.conda.io/en/latest/
+[npm]: https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white
+[npm-docu]: https://docs.npmjs.com/
 [pnpm]: https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220
 [pnpm-docu]: https://pnpm.io/installation
+[yarn]: https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white
+[yarn-docu]: https://yarnpkg.com/cli
 
 <!-- Integrations -->
 [eslint]: https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white
 [eslint-site]: https://eslint.org/
+[grafana]: https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white
+[grafana-site]: https://grafana.com/
 [allure-docu]: https://allurereport.org/docs/
 [allure]: https://img.shields.io/badge/allure_report-black?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzIgMzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjIuMjMxNyA0LjY2MTY4QzIzLjY0NzIgMy4yNjU1MiAyNS45MjY2IDMuMjgxMjQgMjcuMzIyNyA0LjY5Njc5QzMwLjE3NzUgNy41OTExOSAzMS45ODQ0IDExLjU4MjQgMzEuOTg0NCAxNS45OTIyQzMxLjk4NDQgMTcuOTgwNCAzMC4zNzI2IDE5LjU5MjIgMjguMzg0NCAxOS41OTIyQzI2LjM5NjEgMTkuNTkyMiAyNC43ODQ0IDE3Ljk4MDQgMjQuNzg0NCAxNS45OTIyQzI0Ljc4NDQgMTMuNTg2NCAyMy44MDMgMTEuMzgxNSAyMi4xOTY2IDkuNzUyNzNDMjAuODAwNCA4LjMzNzE4IDIwLjgxNjIgNi4wNTc4NCAyMi4yMzE3IDQuNjYxNjhaIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8yMDg1KSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyLjM5MjEgMy42QzEyLjM5MjEgMS42MTE3NyAxNC4wMDM5IDAgMTUuOTkyMSAwQzIwLjQwMTkgMCAyNC4zOTMxIDEuODA2ODcgMjcuMjg3NSA0LjY2MTYzQzI4LjcwMzEgNi4wNTc3OSAyOC43MTg4IDguMzM3MTIgMjcuMzIyNiA5Ljc1MjY4QzI1LjkyNjUgMTEuMTY4MiAyMy42NDcxIDExLjE4MzkgMjIuMjMxNiA5Ljc4Nzc5QzIwLjYwMjggOC4xODEzNiAxOC4zOTc5IDcuMiAxNS45OTIxIDcuMkMxNC4wMDM5IDcuMiAxMi4zOTIxIDUuNTg4MjMgMTIuMzkyMSAzLjZaIiBmaWxsPSJ1cmwoI3BhaW50MV9saW5lYXJfMF8yMDg1KSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTAgMTUuOTkyMkMwIDcuMTU3MjYgNy4xNTcyNiAwIDE1Ljk5MjIgMEMxNy45ODA0IDAgMTkuNTkyMiAxLjYxMTc3IDE5LjU5MjIgMy42QzE5LjU5MjIgNS41ODgyMyAxNy45ODA0IDcuMiAxNS45OTIyIDcuMkMxMS4xMzM3IDcuMiA3LjIgMTEuMTMzNyA3LjIgMTUuOTkyMkM3LjIgMTguMzk4IDguMTgxMzYgMjAuNjAyOSA5Ljc4Nzc5IDIyLjIzMTZDMTEuMTgzOSAyMy42NDcyIDExLjE2ODIgMjUuOTI2NSA5Ljc1MjY4IDI3LjMyMjdDOC4zMzcxMiAyOC43MTg4IDYuMDU3NzkgMjguNzAzMSA0LjY2MTYzIDI3LjI4NzZDMS44MDY4NyAyNC4zOTMyIDAgMjAuNDAyIDAgMTUuOTkyMloiIGZpbGw9InVybCgjcGFpbnQyX2xpbmVhcl8wXzIwODUpIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNC42NjE0MyAyMi4yMzE3QzYuMDU3NTkgMjAuODE2MiA4LjMzNjkzIDIwLjgwMDQgOS43NTI0OCAyMi4xOTY2QzExLjM4MTIgMjMuODAzIDEzLjU4NjEgMjQuNzg0NCAxNS45OTIgMjQuNzg0NEMxNy45ODAyIDI0Ljc4NDQgMTkuNTkyIDI2LjM5NjIgMTkuNTkyIDI4LjM4NDRDMTkuNTkyIDMwLjM3MjYgMTcuOTgwMiAzMS45ODQ0IDE1Ljk5MiAzMS45ODQ0QzExLjU4MjEgMzEuOTg0NCA3LjU5MDk1IDMwLjE3NzUgNC42OTY1NCAyNy4zMjI4QzMuMjgwOTkgMjUuOTI2NiAzLjI2NTI3IDIzLjY0NzMgNC42NjE0MyAyMi4yMzE3WiIgZmlsbD0idXJsKCNwYWludDNfbGluZWFyXzBfMjA4NSkiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yOC4zODQyIDEyLjM5MjJDMzAuMzcyNSAxMi4zOTIyIDMxLjk4NDIgMTQuMDA0IDMxLjk4NDIgMTUuOTkyMkMzMS45ODQyIDI0LjgyNzEgMjQuODI3IDMxLjk4NDQgMTUuOTkyMSAzMS45ODQ0QzE0LjAwMzkgMzEuOTg0NCAxMi4zOTIxIDMwLjM3MjYgMTIuMzkyMSAyOC4zODQ0QzEyLjM5MjEgMjYuMzk2MSAxNC4wMDM5IDI0Ljc4NDQgMTUuOTkyMSAyNC43ODQ0QzIwLjg1MDUgMjQuNzg0NCAyNC43ODQyIDIwLjg1MDcgMjQuNzg0MiAxNS45OTIyQzI0Ljc4NDIgMTQuMDA0IDI2LjM5NiAxMi4zOTIyIDI4LjM4NDIgMTIuMzkyMloiIGZpbGw9InVybCgjcGFpbnQ0X2xpbmVhcl8wXzIwODUpIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjguMzg0NyAxMi4zOTIyQzMwLjM3MjkgMTIuMzkyMiAzMS45ODQ3IDE0LjAwNCAzMS45ODQ3IDE1Ljk5MjJWMjguMzg0NEMzMS45ODQ3IDMwLjM3MjYgMzAuMzcyOSAzMS45ODQ0IDI4LjM4NDcgMzEuOTg0NEMyNi4zOTY0IDMxLjk4NDQgMjQuNzg0NyAzMC4zNzI2IDI0Ljc4NDcgMjguMzg0NFYxNS45OTIyQzI0Ljc4NDcgMTQuMDA0IDI2LjM5NjQgMTIuMzkyMiAyOC4zODQ3IDEyLjM5MjJaIiBmaWxsPSJ1cmwoI3BhaW50NV9saW5lYXJfMF8yMDg1KSIvPgo8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8yMDg1KSI+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjIuMjMyMiA0LjY2MTY4QzIzLjY0NzcgMy4yNjU1MiAyNS45MjcxIDMuMjgxMjQgMjcuMzIzMiA0LjY5Njc5QzMwLjE3OCA3LjU5MTE5IDMxLjk4NDkgMTEuNTgyNCAzMS45ODQ5IDE1Ljk5MjJDMzEuOTg0OSAxNy45ODA0IDMwLjM3MzEgMTkuNTkyMiAyOC4zODQ5IDE5LjU5MjJDMjYuMzk2NiAxOS41OTIyIDI0Ljc4NDkgMTcuOTgwNCAyNC43ODQ5IDE1Ljk5MjJDMjQuNzg0OSAxMy41ODY0IDIzLjgwMzUgMTEuMzgxNSAyMi4xOTcxIDkuNzUyNzNDMjAuODAwOSA4LjMzNzE4IDIwLjgxNjYgNi4wNTc4NCAyMi4yMzIyIDQuNjYxNjhaIiBmaWxsPSJ1cmwoI3BhaW50Nl9saW5lYXJfMF8yMDg1KSIvPgo8L2c+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8yMDg1IiB4MT0iMjYuMzk5OSIgeTE9IjkuNjAwMDUiIHgyPSIyOC43OTk5IiB5Mj0iMTUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzdFMjJDRSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM4QjVDRjYiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDFfbGluZWFyXzBfMjA4NSIgeDE9IjI2Ljc5OTkiIHkxPSI5LjQiIHgyPSIxNy43OTk5IiB5Mj0iMy42IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNFRjQ0NDQiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjREMyNjI2Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQyX2xpbmVhcl8wXzIwODUiIHgxPSIzLjYiIHkxPSIxNCIgeDI9IjUuNCIgeTI9IjI0LjgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzIyQzU1RSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxNTgwM0QiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDNfbGluZWFyXzBfMjA4NSIgeDE9IjQuNzk5OSIgeTE9IjIyLjIiIHgyPSIxNC4zOTk5IiB5Mj0iMjkuMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjOTRBM0I4Ii8+CjxzdG9wIG9mZnNldD0iMC45NTgzNDUiIHN0b3AtY29sb3I9IiM2NDc0OEIiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNjQ3NDhCIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQ0X2xpbmVhcl8wXzIwODUiIHgxPSIyOC4zOTk5IiB5MT0iMjIuMTcyNiIgeDI9IjIyLjE4ODIiIHkyPSIyOC4zODQ0IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNEOTc3MDYiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkJCRjI0Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQ1X2xpbmVhcl8wXzIwODUiIHgxPSIyOS4yMDAzIiB5MT0iNTQuNCIgeDI9IjMwLjYyNTciIHkyPSI1NC4yNTYyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGQkJGMjQiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkJCRjI0Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQ2X2xpbmVhcl8wXzIwODUiIHgxPSIyNi40MDA0IiB5MT0iOS42MDAwNSIgeDI9IjI4LjgwMDQiIHkyPSIxNSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjN0UyMkNFIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzhCNUNGNiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMjA4NSI+CjxyZWN0IHdpZHRoPSI3LjIiIGhlaWdodD0iOCIgZmlsbD0id2hpdGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI0LjgwMDMgMTIpIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==
 
