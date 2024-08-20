@@ -113,6 +113,9 @@ Pasos generales para comenzar a trabajar con el repositorio:
    cd {{REPO_FOLDER}}
    ```
 
+   >[!TIP]
+   > Puedes arrastrar la carpeta del repo hacia dentro del Editor de VsCode para hacer lo mismo
+
 3. **Instala las dependencias con el CLI del package manager**:
 
    ```bash
@@ -566,8 +569,10 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
 
   - Nomenclatura del Suite de Prueba (describe/class) debería ser:
     - `Jira Story ID` + `Story title`
+      - Ejemplo: `GX3-123: Login Page`
   - Nomenclatura del Caso de Prueba (it/test/def) debería ser:
-    - `Jira Story ID` + `TC#` + `TC Title`
+    - `Jira Test Set ID` + `TC#` + `TC Title`
+      - Ejemplo: `GX3-234 TC1: Login with valid credentials`
 
   - **Estructura Matriz de Prueba Automatizada con modelo (Arrange - Act - Assert)**: Es la forma de organizar y estructurar el código de prueba automatizada para mantener un código limpio y fácil de mantener. La estructura de la prueba se divide en tres secciones principales:
     - **Arrange**: Declaración de Datos y Variables
@@ -580,7 +585,7 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
             beforeEach(() => {
                // acciones de precondición de prueba
             });
-            it('GX3-123 TC1: {{TC_Title}}', () => {
+            it('GX3-234 TC1: {{TC_Title}}', () => {
                // Arrange: Declaración de datos y variables
                // Act: Acciones del caso de prueba
                // Assert: Validaciones y comprobaciones con los expect

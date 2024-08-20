@@ -1,5 +1,6 @@
-# 🧪 Testing Automation - WebdriverIO 👨🏻‍🚀 CI/CD
-<!--todo: Reemplazar la variable <repo_name> con el nombre real del repo -->
+<!--! MODELO STANDARD de UPEX para Testing Automation (TAUS) -->
+# 🧪 Testing Automation - *WebdriverIO* 👨🏻‍🚀 CI/CD
+
 [![🧪Pipeline Regression in QA](https://github.com/upex-galaxy/webdriverio-template-gx/actions/workflows/regression.yml/badge.svg)](https://github.com/upex-galaxy/webdriverio-template-gx/actions/workflows/regression.yml)
 
 <!-- Workspace (Require-Badge) -->
@@ -7,7 +8,6 @@
 [![jira]][jira-docu]
 <!-- CI Tool (Require-Badge) -->
 [![github-actions]][github-actions-docu]
-<!--todo: MARKDOWN BADGES TEMPLATE (remover lo que no se usa en el repo) -->
 <!-- Programming Language -->
 [![typescript-logo]][typescript-site]
 <!-- Testing Frameworks -->
@@ -51,6 +51,7 @@ Antes de comenzar a trabajar con el repositorio, asegúrate de cumplir con los s
 
 4. **CLI del Framework de Automatización**
    Por último, asegúrate de instalar la CLI específica del framework de automatización utilizado en el proyecto (preferiblemente de forma global porque podrías necesitarla en diferentes proyectos):
+   <!--todo: CLI (remueve la línea que no aplica al Framework) -->
    - **WebdriverIO**: `npm install -g @wdio/cli`
 
 ---
@@ -70,6 +71,9 @@ Pasos generales para comenzar a trabajar con el repositorio:
    ```bash
    cd {{REPO_FOLDER}}
    ```
+
+   >[!TIP]
+   > Puedes arrastrar la carpeta del repo hacia dentro del Editor de VsCode para hacer lo mismo
 
 3. **Instala las dependencias con el CLI del package manager**:
 
@@ -320,79 +324,19 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
   - Directorio: `.../pageobjects` o `.../pages`
   - Nomenclatura: **PascalCase** o **snake_case** según el lenguaje:
     - Para Node (JS/TS): `**Page.js` / `**Page.ts` - ejemplo: `LoginPage.ts`
-      - Estructura básica de POM en **Cypress con Typescript:**
+      - Estructura básica de POM en **WebdriverIO con Typescript:**
 
          ```typescript
-         export class LoginPage {
-            // Tipado de Elementos de la Página
-            loginButton: () => Cypress.Chainable<JQuery<HTMLButtonElement>>;
-            constructor() {
-               // Elementos de la Página
-               this.loginButton = () => cy.get('[form=login]').contains('button', 'Log in');
-            }
-            submitLogin() { // Método de Acción
-               this.loginButton().click();
-            }
-         }
-         ```
+         import { $ } from '@wdio/globals';
+         class LoginPage {
+            // Elementos de la Página
+            get loginButton() { return $('button[type="submit"]') };
 
-      - Estructura básica de POM en **Playwright con Typescript:**
-
-         ```typescript
-         import { Page } from '@playwright/test';
-         export class LoginPage {
-            // Tipado de Elementos de la Página
-            usernameInput: Locator;
-            constructor(page: Page) {
-               // Elementos de la Página
-               this.page = page;
-               this.loginButton = this.page.locator('[form="login"]');
-            }
             async submitLogin() { // Método de Acción
                await this.loginButton.click();
             }
          }
-         ```
-
-    - Para Java: `**Page.java` - ejemplo: `LoginPage.java`
-      - Estructura básica de POM en **Selenium con Java:**
-
-         ```java
-         package e2e.pages;
-         import java.util.function.Supplier;
-         import org.openqa.selenium.WebDriver;
-         import org.openqa.selenium.WebElement;
-         import org.openqa.selenium.By;
-         public class LoginPage {
-            // Tipado de Elementos de la Página
-            private Supplier<WebElement> loginButton;
-            // * ARMAR EL CONSTRUCTOR con WebDriver (para usar sus métodos)
-            public LoginPage(WebDriver driver) {
-               // Elementos de la Página
-               this.web = driver;
-               this.loginButton = () -> this.web.findElement(By.id("login-submit"));
-            }
-            public void submitLogin() {
-               this.loginButton.get().click();
-            }
-         }
-         ```
-
-    - Para Python: `**_page.py` - ejemplo: `login_page.py`
-      - Estructura básica de POM en **Selenium con Python:**
-
-         ```python
-         from selenium.webdriver.remote.webdriver import WebDriver
-         from selenium.webdriver.common.by import By
-         class LoginPage:
-            # * ARMAR EL CONSTRUCTOR con WebDriver (para usar sus métodos)
-            def __init__(self, driver: WebDriver):
-               # Elementos de la Página
-               self.web = driver
-               self.submitButton = lambda: self.web.find_element(By.ID, "login-submit")
-
-            def submitLogin(self):
-               return self.submitButton().click()
+         export default new LoginPage();
          ```
 
    > [!TIP]
@@ -501,15 +445,16 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
     - para pruebas de Integration: `**api.test.{js,ts}` (JS/TS) o `**ApiTest.java` (Java) o `**api_test.py` (Python)
 
   - Path de Pruebas:
-    - Cypress(TS): `cypress/e2e/specs/<component-name>/*.ts` (ejemplo: `cypress/e2e/specs/payment/payByDebit.cy.ts`)
-    - Playwright(TS): `test/specs/<component-name>/*.ts` (ejemplo: `test/specs/payment/payByDebit.test.ts`)
-    - Selenium(Java): `src/test/java/e2e/specs/<component-name>/*.java` (ejemplo: `src/test/java/e2e/specs/payment/PayByDebit.java`)
-    - Selenium(Python): `test/specs/<component-name>/*.py` (ejemplo: `test/specs/payment/PayByDebit.java`)
+    - WebdriverIO(TS): `test/specs/<component-name>/*.ts`
+      - (ejemplo: `test/specs/payment/payByDebit.test.ts`)
 
   - Nomenclatura del Suite de Prueba (describe/class) debería ser:
     - `Jira Story ID` + `Story title`
+      - Ejemplo: `GX3-123: Login Page`
+
   - Nomenclatura del Caso de Prueba (it/test/def) debería ser:
-    - `Jira Story ID` + `TC#` + `TC Title`
+    - `Jira Test Set ID` + `TC#` + `TC Title`
+      - Ejemplo: `GX3-234 TC1: Login with valid credentials`
 
   - **Estructura Matriz de Prueba Automatizada con modelo (Arrange - Act - Assert)**: Es la forma de organizar y estructurar el código de prueba automatizada para mantener un código limpio y fácil de mantener. La estructura de la prueba se divide en tres secciones principales:
     - **Arrange**: Declaración de Datos y Variables
@@ -522,7 +467,7 @@ Para mantener la consistencia y claridad en los repositorios de UPEX, sigue esta
             beforeEach(() => {
                // acciones de precondición de prueba
             });
-            it('GX3-123 TC1: {{TC_Title}}', () => {
+            test('GX3-234 TC1: {{TC_Title}}', () => {
                // Arrange: Declaración de datos y variables
                // Act: Acciones del caso de prueba
                // Assert: Validaciones y comprobaciones con los expect

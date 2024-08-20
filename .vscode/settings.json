@@ -113,7 +113,7 @@
 		"modules.d.ts": "typescript",
 		"regression.yml": "test-ts",
 		"smoke.yml": "test-ts",
-		"sanity.yml": "test-ts",
+		"sanityTest.yml": "test-ts",
 		"*.api.test.ts": "test-js",
 		"*.e2e.test.ts": "test-jsx",
 		"page.ts": "3d",
