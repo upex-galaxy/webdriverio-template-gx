@@ -112,6 +112,7 @@ jobs:
         testPaths: 'reports/junit-results/wdio-junit-test-reporter.xml' #! NO CAMBIAR
         testExecKey: ${{ github.event.inputs.xray_tx }} #! NO CAMBIAR
         projectKey: ${{ github.event.inputs.xray_project }} #! NO CAMBIAR
+        testEnvironments: ${{ github.event.inputs.environment }}
 
     #* ------- Allure Report Build -------
     - name: 📊 Get Allure Report History
