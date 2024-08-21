@@ -9,6 +9,13 @@
 	// =====================
 	//? Language Specific Settings
 	// =====================
+	"[markdown]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+		"editor.tabSize": 4,
+		"editor.insertSpaces": true,
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true
+	},
 	"[Typescript]": {
 		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
 	},
@@ -45,9 +52,11 @@
 	"editor.defaultColorDecorators": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 4,
-	"editor.detectIndentation": true,
+	"editor.detectIndentation": false,
 	"editor.codeActionsOnSave": {
-		"source.fixAll": "explicit"
+		"source.fixAll": "explicit",
+		"source.fixAll.markdownlint": "explicit",
+		"source.fixAll.eslint": "explicit"
 	},
 	"editor.quickSuggestions": {
 		"comments": true,
@@ -56,6 +65,11 @@
 	},
 	"editor.tabCompletion": "on",
 	"editor.wordWrap": "on",
+	"markdownlint.config": {
+		"default": true,
+		"MD029": false,
+		"ul-indent": { "indent": 4 }
+	},
 	"files.eol": "\n",
 	// =====================
 	//? ESLint Settings
@@ -104,7 +118,7 @@
 		"modules.d.ts": "typescript",
 		"regression.yml": "test-ts",
 		"smoke.yml": "test-ts",
-		"sanity.yml": "test-ts",
+		"sanityTest.yml": "test-ts",
 		"*.api.test.ts": "test-js",
 		"*.e2e.test.ts": "test-jsx",
 		"page.ts": "3d",
